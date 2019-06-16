@@ -2,11 +2,15 @@ MKDIR_P ?= mkdir -p
 BUILD_DIR ?= ./build
 
 CC=clang
-DEPS=sokol_app.h sokol_gfx.h
 FRAMEWORKS=-framework Foundation -framework Cocoa -framework AppKit -framework OpenGL
 LIBRARIES=-lobjc
-CFLAGS=-Wall -Werror $(SOURCES)
+CFLAGS=-Iextern -Wall -Werror $(SOURCES)
 LDFLAGS=$(LIBRARIES) $(FRAMEWORKS)
+
+DEPS = \
+	extern/sokol_app.h \
+	extern/sokol_gfx.h \
+	extern/sokol.m
 
 OBJS := \
 	$(BUILD_DIR)/glfluid.o \
@@ -21,7 +25,7 @@ $(BUILD_DIR)/glfluid.o:
 
 $(BUILD_DIR)/sokol.o:
 	$(MKDIR_P) $(dir $@)
-	$(CC) -fobjc-arc -c -Wall sokol.m -o $@
+	$(CC) -fobjc-arc -c -Wall extern/sokol.m -o $@
 
 clean:
 	rm -rf $(BUILD_DIR) glfluid
