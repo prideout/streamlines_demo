@@ -11,7 +11,7 @@ static par_streamlines_position vertices[] = {
     {200, 100},
     {550, 200},
 
-    {400, 150},
+    {400, 200},
     {400, 100},
 };
 
@@ -116,6 +116,10 @@ void draw_demo_simple(app_state* app) {
     demo_state* state = &app->demos[DEMO_SIMPLE];
 
     vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
+    vertices[3].x = 400 + 50 * cos(M_PI * elapsed_seconds);
+    vertices[3].y = 150 + 50 * sin(M_PI * elapsed_seconds);
+    vertices[4].x = 400 - 50 * cos(M_PI * elapsed_seconds);
+    vertices[4].y = 150 - 50 * sin(M_PI * elapsed_seconds);
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
