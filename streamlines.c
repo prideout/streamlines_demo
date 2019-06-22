@@ -21,12 +21,13 @@ void init_app() {
     };
 
     init_demo_simple(&app);
+    init_demo_wireframe(&app);
 
     app.start_time = stm_now();
 }
 
 void frame() {
-    draw_demo_simple(&app);
+    draw_demo_wireframe(&app);
 }
 
 void cleanup() {

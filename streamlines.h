@@ -43,3 +43,6 @@ typedef struct {
 
 void init_demo_simple(app_state* app);
 void draw_demo_simple(app_state* app);
+
+void init_demo_wireframe(app_state* app);
+void draw_demo_wireframe(app_state* app);

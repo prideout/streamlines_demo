@@ -13,6 +13,7 @@ EXTRA_DEPS = \
 OBJECTS = \
 	$(BUILD_DIR)/streamlines.o \
 	$(BUILD_DIR)/demo_simple.o \
+	$(BUILD_DIR)/demo_wireframe.o \
 	$(BUILD_DIR)/sokol.o
 
 streamlines: $(OBJECTS)
