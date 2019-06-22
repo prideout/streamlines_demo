@@ -6,30 +6,25 @@ FRAMEWORKS=-framework Foundation -framework Cocoa -framework AppKit -framework O
 LIBRARIES=-lobjc
 CFLAGS=-Iextern -I. -Wall -std=c11 -O3 $(SOURCES)
 LDFLAGS=$(LIBRARIES) $(FRAMEWORKS)
-
-DEPS = \
-	extern/sokol_app.h \
-	extern/sokol_gfx.h \
+EXTRA_DEPS = \
 	par/par_streamlines.h \
-	extern/sokol.m
+	streamlines.h
 
-streamlines: $(BUILD_DIR)/streamlines.o $(BUILD_DIR)/sokol.o
+OBJECTS = \
+	$(BUILD_DIR)/streamlines.o \
+	$(BUILD_DIR)/demo_simple.o \
+	$(BUILD_DIR)/sokol.o
+
+streamlines: $(OBJECTS)
 	 $(CC) $(LDFLAGS) -o streamlines $^
 
-glfluid: $(BUILD_DIR)/glfluid.o $(BUILD_DIR)/sokol.o
-	 $(CC) $(LDFLAGS) -o glfluid $^
-
-$(BUILD_DIR)/glfluid.o: glfluid.c
+$(BUILD_DIR)/%.o: %.c $(EXTRA_DEPS)
 	$(MKDIR_P) $(dir $@)
-	$(CC) $(CFLAGS) -c $^ -o $@
-
-$(BUILD_DIR)/streamlines.o: streamlines.c
-	$(MKDIR_P) $(dir $@)
-	$(CC) $(CFLAGS) -c $^ -o $@
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(BUILD_DIR)/sokol.o:
 	$(MKDIR_P) $(dir $@)
 	$(CC) -fobjc-arc -c -Wall -O3 extern/sokol.m -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) glfluid streamlines
+	rm -rf $(BUILD_DIR) streamlines
