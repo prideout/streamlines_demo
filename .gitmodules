@@ -1,0 +1,3 @@
+[submodule "par"]
+	path = par
+	url = https://github.com/prideout/par.git
