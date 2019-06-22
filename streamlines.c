@@ -22,12 +22,13 @@ void init_app() {
 
     init_demo_simple(&app);
     init_demo_wireframe(&app);
+    init_demo_gradient(&app);
 
     app.start_time = stm_now();
 }
 
 void frame() {
-    draw_demo_wireframe(&app);
+    draw_demo_gradient(&app);
 }
 
 void cleanup() {
