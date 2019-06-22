@@ -1,8 +1,19 @@
 #include "sokol_app.h"
 #include "sokol_gfx.h"
+#include "sokol_time.h"
 
 #define PAR_STREAMLINES_IMPLEMENTATION
 #include <par/par_streamlines.h>
+
+#include <sys/time.h>
+
+par_streamlines_position vertices[] = {
+    {50, 150},
+    {200, 100},
+    {550, 200},
+};
+
+uint16_t spine_lengths[] = { 3 };
 
 typedef struct {
     float inverse_width;
@@ -16,11 +27,16 @@ struct {
     par_streamlines_context* context;
     sg_pipeline pipeline;
     sg_bindings bindings;
+    sg_buffer positions_buffer;
+    sg_buffer annotations_buffer;
     int num_elements;
+    uint64_t start_time;
+    par_streamlines_spine_list spines;
 } app;
 
 void init() {
     sg_setup(&(sg_desc){});
+    stm_setup();
 
     app.pass_action = (sg_pass_action) {
         .colors[0] = {
@@ -32,37 +48,32 @@ void init() {
     par_streamlines_config config = { .thickness = 10 };
     app.context = par_streamlines_create_context(config);
 
-    par_streamlines_position vertices[] = {
-        {50, 150},
-        {200, 100},
-        {550, 200},
-    };
-    uint16_t spine_lengths[] = { 3 };
-    par_streamlines_spine_list spines = {
+    app.spines = (par_streamlines_spine_list) {
         .num_vertices = 3,
         .num_spines = 1,
         .vertices = vertices,
         .spine_lengths = spine_lengths
     };
     par_streamlines_mesh* mesh;
-    mesh = par_streamlines_draw_lines(app.context, spines);
+    mesh = par_streamlines_draw_lines(app.context, app.spines);
+
     app.num_elements = mesh->num_triangles * 3;
-
-    sg_buffer positions = sg_make_buffer(&(sg_buffer_desc){
-        .size = mesh->num_vertices * sizeof(par_streamlines_position),
-        .content = mesh->vertex_positions
-    });
-
     assert(sizeof(par_streamlines_position) == 2 * sizeof(float));
     assert(sizeof(par_streamlines_annotation) == 4 * sizeof(float));
 
-    sg_buffer annotations = sg_make_buffer(&(sg_buffer_desc){
+    app.positions_buffer = sg_make_buffer(&(sg_buffer_desc){
+        .size = mesh->num_vertices * sizeof(par_streamlines_position),
+        .usage = SG_USAGE_DYNAMIC,
+    });
+
+    app.annotations_buffer = sg_make_buffer(&(sg_buffer_desc){
         .size = mesh->num_vertices * sizeof(par_streamlines_annotation),
-        .content = mesh->vertex_annotations
+        .usage = SG_USAGE_DYNAMIC,
     });
 
     sg_buffer indices = sg_make_buffer(&(sg_buffer_desc){
         .size = mesh->num_triangles * 3 * sizeof(uint32_t),
+        .usage = SG_USAGE_IMMUTABLE,
         .content = mesh->triangle_indices,
         .type = SG_BUFFERTYPE_INDEXBUFFER
     });
@@ -95,8 +106,8 @@ void init() {
     });
 
     app.bindings = (sg_bindings) {
-        .vertex_buffers[0] = positions,
-        .vertex_buffers[1] = annotations,
+        .vertex_buffers[0] = app.positions_buffer,
+        .vertex_buffers[1] = app.annotations_buffer,
         .index_buffer = indices
     };
 
@@ -114,15 +125,33 @@ void init() {
             }
         }
     });
+
+    app.start_time = stm_now();
 }
 
 void frame() {
+    const double elapsed_seconds = stm_sec(stm_since(app.start_time));
+
     uniform_params resolution = {
         1.0f / sapp_width(),
         1.0f / sapp_height(),
         sapp_width(),
         sapp_height()
     };
+
+    vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
+
+    par_streamlines_mesh* mesh;
+    mesh = par_streamlines_draw_lines(app.context, app.spines);
+
+    sg_update_buffer(app.positions_buffer,
+        mesh->vertex_positions,
+        mesh->num_vertices * sizeof(par_streamlines_position));
+
+    sg_update_buffer(app.annotations_buffer,
+        mesh->vertex_annotations,
+        mesh->num_vertices * sizeof(par_streamlines_annotation));
+
     sg_begin_default_pass(&app.pass_action, sapp_width(), sapp_height());
     sg_apply_pipeline(app.pipeline);
     sg_apply_bindings(&app.bindings);
