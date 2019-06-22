@@ -6,23 +6,17 @@
 #include <assert.h>
 #include <math.h>
 
-#define DEMO_INDEX ((int) DEMO_WIREFRAME)
+#define SLICES 16
+#define DEMO_INDEX ((int) DEMO_CLOSED)
 
-static par_streamlines_position vertices[] = {
-    {50, 150},
-    {200, 100},
-    {550, 200},
+static par_streamlines_position vertices[SLICES];
 
-    {400, 200},
-    {400, 100},
-};
+static uint16_t spine_lengths[] = { SLICES };
 
-static uint16_t spine_lengths[] = { 3, 2 };
-
-void init_demo_wireframe(app_state* app) {
+void init_demo_closed(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 15, .wireframe = true };
+    par_streamlines_config config = { .thickness = 15 };
 
     state->context = par_streamlines_create_context(config);
 
@@ -35,7 +29,7 @@ void init_demo_wireframe(app_state* app) {
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
 
-    state->num_elements = mesh->num_triangles * 4;
+    state->num_elements = mesh->num_triangles * 3;
     assert(sizeof(par_streamlines_position) == 2 * sizeof(float));
     assert(sizeof(par_streamlines_annotation) == 4 * sizeof(float));
 
@@ -50,7 +44,7 @@ void init_demo_wireframe(app_state* app) {
     });
 
     sg_buffer indices = sg_make_buffer(&(sg_buffer_desc){
-        .size = mesh->num_triangles * 4 * sizeof(uint32_t),
+        .size = mesh->num_triangles * 3 * sizeof(uint32_t),
         .usage = SG_USAGE_IMMUTABLE,
         .content = mesh->triangle_indices,
         .type = SG_BUFFERTYPE_INDEXBUFFER
@@ -79,7 +73,10 @@ void init_demo_wireframe(app_state* app) {
             "in vec4 vannotation;\n"
             "out vec4 frag_color;\n"
             "void main() {\n"
-            "  frag_color = vec4(0, 0, 0, 1);\n"
+            "  float distance_along_spine = vannotation.x;\n"
+            "  float spine_length = vannotation.y;\n"
+            "  float t = 0.5 + 0.5 * sin(20.0 * distance_along_spine / spine_length);\n"
+            "  frag_color = vec4(t, 0, t, 1);\n"
             "}\n"
     });
 
@@ -92,7 +89,6 @@ void init_demo_wireframe(app_state* app) {
     state->pipeline = sg_make_pipeline(&(sg_pipeline_desc){
         .shader = program,
         .index_type = SG_INDEXTYPE_UINT32,
-        .primitive_type = SG_PRIMITIVETYPE_LINE_STRIP,
         .layout = {
             .attrs = {
                 [0].buffer_index = 0,
@@ -106,7 +102,7 @@ void init_demo_wireframe(app_state* app) {
     });
 }
 
-void draw_demo_wireframe(app_state* app) {
+void draw_demo_closed(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     uniform_params resolution = {
@@ -118,11 +114,12 @@ void draw_demo_wireframe(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
 
-    vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
-    vertices[3].x = 400 + 50 * cos(M_PI * elapsed_seconds);
-    vertices[3].y = 150 + 50 * sin(M_PI * elapsed_seconds);
-    vertices[4].x = 400 - 50 * cos(M_PI * elapsed_seconds);
-    vertices[4].y = 150 - 50 * sin(M_PI * elapsed_seconds);
+    const float dtheta = M_PI * 2 / SLICES;
+    float theta = elapsed_seconds;
+    for (int i = 0; i < 16; i++, theta += dtheta) {
+        vertices[i].x = 300 + 100 * cos(theta);
+        vertices[i].y = 150 + 100 * sin(theta);
+    }
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
@@ -139,11 +136,7 @@ void draw_demo_wireframe(app_state* app) {
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
-
-    for (int i = 0; i < state->num_elements; i += 4) {
-        sg_draw(i, 4, 1);
-    }
-
+    sg_draw(0, state->num_elements, 1);
     sg_end_pass();
     sg_commit();
 }

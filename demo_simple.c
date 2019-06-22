@@ -6,6 +6,8 @@
 #include <assert.h>
 #include <math.h>
 
+#define DEMO_INDEX ((int) DEMO_SIMPLE)
+
 static par_streamlines_position vertices[] = {
     {50, 150},
     {200, 100},
@@ -19,7 +21,7 @@ static uint16_t spine_lengths[] = { 3, 2 };
 
 void init_demo_simple(app_state* app) {
 
-    demo_state* state = &app->demos[DEMO_SIMPLE];
+    demo_state* state = &app->demos[DEMO_INDEX];
     par_streamlines_config config = { .thickness = 15 };
 
     state->context = par_streamlines_create_context(config);
@@ -113,7 +115,7 @@ void draw_demo_simple(app_state* app) {
         sapp_height()
     };
 
-    demo_state* state = &app->demos[DEMO_SIMPLE];
+    demo_state* state = &app->demos[DEMO_INDEX];
 
     vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
     vertices[3].x = 400 + 50 * cos(M_PI * elapsed_seconds);

@@ -8,7 +8,7 @@ typedef enum {
     DEMO_SIMPLE = 0,
     DEMO_WIREFRAME = 1,
     DEMO_GRADIENT = 2,
-    DEMO_CLOSED_SPINE = 3,
+    DEMO_CLOSED = 3,
     DEMO_COLOR_PER_SPINE = 4,
     DEMO_COLOR_PER_SEGMENT = 5,
     DEMO_ENDCAP_SHADER = 6,
@@ -49,3 +49,6 @@ void draw_demo_wireframe(app_state* app);
 
 void init_demo_gradient(app_state* app);
 void draw_demo_gradient(app_state* app);
+
+void init_demo_closed(app_state* app);
+void draw_demo_closed(app_state* app);
