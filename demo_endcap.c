@@ -149,7 +149,6 @@ void draw_demo_endcap(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
 
-    vertices[1].x = 75  + 50  * sin(M_PI * elapsed_seconds);
     vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
     vertices[3].x = 400 + 50  * cos(M_PI * elapsed_seconds);
     vertices[3].y = 150 + 50  * sin(M_PI * elapsed_seconds);

@@ -20,12 +20,15 @@ void init_app() {
         }
     };
 
-    init_demo_simple(&app);
-    init_demo_wireframe(&app);
-    init_demo_gradient(&app);
-    init_demo_closed(&app);
-    init_demo_endcap(&app);
-    init_demo_noisy(&app);
+    switch (app.current_demo) {
+        case DEMO_SIMPLE: init_demo_simple(&app); break;
+        case DEMO_WIREFRAME: init_demo_wireframe(&app); break;
+        case DEMO_GRADIENT: init_demo_gradient(&app); break;
+        case DEMO_CLOSED: init_demo_closed(&app); break;
+        case DEMO_ENDCAP: init_demo_endcap(&app); break;
+        case DEMO_NOISY: init_demo_noisy(&app); break;
+        case DEMO_STREAMLINES: init_demo_streamlines(&app); break;
+    }
 
     app.start_time = stm_now();
 }
@@ -38,8 +41,7 @@ void frame() {
         case DEMO_CLOSED: draw_demo_closed(&app); break;
         case DEMO_ENDCAP: draw_demo_endcap(&app); break;
         case DEMO_NOISY: draw_demo_noisy(&app); break;
-        default:
-            exit(1);
+        case DEMO_STREAMLINES: draw_demo_streamlines(&app); break;
     }
 }
 

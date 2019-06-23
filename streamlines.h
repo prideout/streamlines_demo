@@ -9,13 +9,12 @@ typedef enum {
     DEMO_WIREFRAME = 1,
     DEMO_GRADIENT = 2,
     DEMO_CLOSED = 3,
-    DEMO_ENDCAP = 4, // <-- this has multiple varieties
-    DEMO_NOISY = 5,  // <-- this has multiple varieties
-    DEMO_STREAMLINES = 6,
-    DEMO_JOINTS = 7
+    DEMO_ENDCAP = 4, // <-- this has variations
+    DEMO_NOISY = 5,  // <-- this has variations
+    DEMO_STREAMLINES = 6,  // <-- this has variations
 } demo_type;
 
-#define DEMO_COUNT 8
+#define DEMO_COUNT 7
 
 typedef struct {
     par_streamlines_context* context;
@@ -59,3 +58,6 @@ void draw_demo_endcap(app_state* app);
 
 void init_demo_noisy(app_state* app);
 void draw_demo_noisy(app_state* app);
+
+void init_demo_streamlines(app_state* app);
+void draw_demo_streamlines(app_state* app);
