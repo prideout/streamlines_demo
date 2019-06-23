@@ -9,14 +9,13 @@ typedef enum {
     DEMO_WIREFRAME = 1,
     DEMO_GRADIENT = 2,
     DEMO_CLOSED = 3,
-    DEMO_COLOR_PER_SPINE = 4,
-    DEMO_COLOR_PER_SEGMENT = 5,
-    DEMO_ENDCAP_SHADER = 6,
-    DEMO_NOISY_LINES = 7,
-    DEMO_STREAMLINES = 8,
+    DEMO_ENDCAP_SHADER = 4,
+    DEMO_NOISY_LINES = 5,
+    DEMO_STREAMLINES = 6,
+    DEMO_BAD_JOINTS = 7
 } demo_type;
 
-#define DEMO_COUNT 9
+#define DEMO_COUNT 8
 
 typedef struct {
     par_streamlines_context* context;

@@ -6,17 +6,17 @@
 #include <assert.h>
 #include <math.h>
 
-#define SLICES 16
+#define SLICES 10
 #define DEMO_INDEX ((int) DEMO_CLOSED)
 
-static par_streamlines_position vertices[SLICES];
+static par_streamlines_position vertices[SLICES + 6];
 
-static uint16_t spine_lengths[] = { SLICES };
+static uint16_t spine_lengths[] = { SLICES, 3, 3 };
 
 void init_demo_closed(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 15 };
+    par_streamlines_config config = { .thickness = 20 };
 
     state->context = par_streamlines_create_context(config);
 
@@ -24,12 +24,12 @@ void init_demo_closed(app_state* app) {
         .num_vertices = sizeof(vertices) / sizeof(par_streamlines_position),
         .num_spines = sizeof(spine_lengths) / sizeof(uint16_t),
         .vertices = vertices,
-        .spine_lengths = spine_lengths
+        .spine_lengths = spine_lengths,
+        .closed = false
     };
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
 
-    state->num_elements = mesh->num_triangles * 3;
     assert(sizeof(par_streamlines_position) == 2 * sizeof(float));
     assert(sizeof(par_streamlines_annotation) == 4 * sizeof(float));
 
@@ -75,8 +75,8 @@ void init_demo_closed(app_state* app) {
             "void main() {\n"
             "  float distance_along_spine = vannotation.x;\n"
             "  float spine_length = vannotation.y;\n"
-            "  float t = 0.5 + 0.5 * sin(20.0 * distance_along_spine / spine_length);\n"
-            "  frag_color = vec4(t, 0, t, 1);\n"
+            "  float t = 0.5 + 0.5 * sin(100.0 * distance_along_spine / spine_length);\n"
+            "  frag_color = vec4(t, t, t, 1);\n"
             "}\n"
     });
 
@@ -116,10 +116,24 @@ void draw_demo_closed(app_state* app) {
 
     const float dtheta = M_PI * 2 / SLICES;
     float theta = elapsed_seconds;
-    for (int i = 0; i < 16; i++, theta += dtheta) {
+    for (int i = 0; i < SLICES; i++, theta += dtheta) {
         vertices[i].x = 300 + 100 * cos(theta);
         vertices[i].y = 150 + 100 * sin(theta);
     }
+
+    vertices[SLICES + 0].x = 300;
+    vertices[SLICES + 0].y = 150;
+    vertices[SLICES + 1].x = 500;
+    vertices[SLICES + 1].y = 100;
+    vertices[SLICES + 2].x = 500;
+    vertices[SLICES + 2].y = 190;
+
+    vertices[SLICES + 3].x = 100;
+    vertices[SLICES + 3].y = 190;
+    vertices[SLICES + 4].x = 300;
+    vertices[SLICES + 4].y = 150;
+    vertices[SLICES + 5].x = 100;
+    vertices[SLICES + 5].y = 100;
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
@@ -136,7 +150,7 @@ void draw_demo_closed(app_state* app) {
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
-    sg_draw(0, state->num_elements, 1);
+    sg_draw(0, mesh->num_triangles * 3, 1);
     sg_end_pass();
     sg_commit();
 }
