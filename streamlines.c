@@ -24,6 +24,7 @@ void init_app() {
     init_demo_wireframe(&app);
     init_demo_gradient(&app);
     init_demo_closed(&app);
+    init_demo_endcap(&app);
 
     app.start_time = stm_now();
 }
@@ -41,6 +42,9 @@ void frame() {
             break;
         case DEMO_CLOSED:
             draw_demo_closed(&app);
+            break;
+        case DEMO_ENDCAP:
+            draw_demo_endcap(&app);
             break;
         default:
             exit(1);

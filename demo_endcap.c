@@ -6,17 +6,24 @@
 #include <assert.h>
 #include <math.h>
 
-#define SLICES 10
-#define DEMO_INDEX ((int) DEMO_CLOSED)
+#define DEMO_INDEX ((int) DEMO_ENDCAP)
 
-static par_streamlines_position vertices[SLICES + 6];
+static par_streamlines_position vertices[] = {
+    {50, 150},
+    {200, 100},
+    {550, 200},
 
-static uint16_t spine_lengths[] = { SLICES, 3, 3 };
+    {400, 200},
+    {400, 100},
+};
 
-void init_demo_closed(app_state* app) {
+static uint16_t spine_lengths[] = { 3, 2 };
+
+void init_demo_endcap(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 20 };
+    par_streamlines_config config = { .thickness = 15 };
+    config.u_mode = PAR_U_MODE_DISTANCE;
 
     state->context = par_streamlines_create_context(config);
 
@@ -24,12 +31,12 @@ void init_demo_closed(app_state* app) {
         .num_vertices = sizeof(vertices) / sizeof(par_streamlines_position),
         .num_spines = sizeof(spine_lengths) / sizeof(uint16_t),
         .vertices = vertices,
-        .spine_lengths = spine_lengths,
-        .closed = true
+        .spine_lengths = spine_lengths
     };
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
 
+    state->num_elements = mesh->num_triangles * 3;
     assert(sizeof(par_streamlines_position) == 2 * sizeof(float));
     assert(sizeof(par_streamlines_annotation) == 4 * sizeof(float));
 
@@ -73,9 +80,14 @@ void init_demo_closed(app_state* app) {
             "in vec4 vannotation;\n"
             "out vec4 frag_color;\n"
             "void main() {\n"
-            "  float distance_along_spine = vannotation.x;\n"
-            "  float spine_length = vannotation.y;\n"
-            "  frag_color = vec4(0.0, 0.0, 0.0, 0.8);\n"
+            "  float dist = vannotation.x;\n"
+            "  float alpha = 1.0;\n"
+            "  if (dist < 7.5) {\n"
+            "      float x = dist - 7.5;\n"
+            "      float y = vannotation.y * 7.5;\n"
+            "      alpha = x * x + y * y < (7.5 * 7.5) ? 1.0 : 0.0;\n"
+            "  }\n"
+            "  frag_color = vec4(0, 0, 0, alpha);\n"
             "}\n"
     });
 
@@ -106,7 +118,7 @@ void init_demo_closed(app_state* app) {
     });
 }
 
-void draw_demo_closed(app_state* app) {
+void draw_demo_endcap(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     uniform_params resolution = {
@@ -118,26 +130,11 @@ void draw_demo_closed(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
 
-    const float dtheta = M_PI * 2 / SLICES;
-    float theta = elapsed_seconds;
-    for (int i = 0; i < SLICES; i++, theta += dtheta) {
-        vertices[i].x = 300 + 100 * cos(theta);
-        vertices[i].y = 150 + 100 * sin(theta);
-    }
-
-    vertices[SLICES + 0].x = 300+30;
-    vertices[SLICES + 0].y = 150;
-    vertices[SLICES + 1].x = 500+30;
-    vertices[SLICES + 1].y = 100;
-    vertices[SLICES + 2].x = 500+30;
-    vertices[SLICES + 2].y = 190;
-
-    vertices[SLICES + 3].x = 100-30;
-    vertices[SLICES + 3].y = 190;
-    vertices[SLICES + 4].x = 300-30;
-    vertices[SLICES + 4].y = 150;
-    vertices[SLICES + 5].x = 100-30;
-    vertices[SLICES + 5].y = 100;
+    vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
+    vertices[3].x = 400 + 50 * cos(M_PI * elapsed_seconds);
+    vertices[3].y = 150 + 50 * sin(M_PI * elapsed_seconds);
+    vertices[4].x = 400 - 50 * cos(M_PI * elapsed_seconds);
+    vertices[4].y = 150 - 50 * sin(M_PI * elapsed_seconds);
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
@@ -154,7 +151,7 @@ void draw_demo_closed(app_state* app) {
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
-    sg_draw(0, mesh->num_triangles * 3, 1);
+    sg_draw(0, state->num_elements, 1);
     sg_end_pass();
     sg_commit();
 }

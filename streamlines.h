@@ -9,10 +9,10 @@ typedef enum {
     DEMO_WIREFRAME = 1,
     DEMO_GRADIENT = 2,
     DEMO_CLOSED = 3,
-    DEMO_ENDCAP_SHADER = 4,
-    DEMO_NOISY_LINES = 5,
+    DEMO_ENDCAP = 4,
+    DEMO_NOISY = 5,
     DEMO_STREAMLINES = 6,
-    DEMO_BAD_JOINTS = 7
+    DEMO_JOINTS = 7
 } demo_type;
 
 #define DEMO_COUNT 8
@@ -52,3 +52,6 @@ void draw_demo_gradient(app_state* app);
 
 void init_demo_closed(app_state* app);
 void draw_demo_closed(app_state* app);
+
+void init_demo_endcap(app_state* app);
+void draw_demo_endcap(app_state* app);
