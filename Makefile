@@ -17,6 +17,7 @@ OBJECTS = \
 	$(BUILD_DIR)/demo_gradient.o \
 	$(BUILD_DIR)/demo_closed.o \
 	$(BUILD_DIR)/demo_endcap.o \
+	$(BUILD_DIR)/demo_noisy.o \
 	$(BUILD_DIR)/sokol.o
 
 streamlines: $(OBJECTS)

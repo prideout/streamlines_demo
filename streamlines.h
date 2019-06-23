@@ -9,8 +9,8 @@ typedef enum {
     DEMO_WIREFRAME = 1,
     DEMO_GRADIENT = 2,
     DEMO_CLOSED = 3,
-    DEMO_ENDCAP = 4,
-    DEMO_NOISY = 5,
+    DEMO_ENDCAP = 4, // <-- this has multiple varieties
+    DEMO_NOISY = 5,  // <-- this has multiple varieties
     DEMO_STREAMLINES = 6,
     DEMO_JOINTS = 7
 } demo_type;
@@ -23,6 +23,7 @@ typedef struct {
     sg_bindings bindings;
     sg_buffer positions_buffer;
     sg_buffer annotations_buffer;
+    sg_buffer lengths_buffer;
     int num_elements;
     par_streamlines_spine_list spines;
 } demo_state;
@@ -55,3 +56,6 @@ void draw_demo_closed(app_state* app);
 
 void init_demo_endcap(app_state* app);
 void draw_demo_endcap(app_state* app);
+
+void init_demo_noisy(app_state* app);
+void draw_demo_noisy(app_state* app);

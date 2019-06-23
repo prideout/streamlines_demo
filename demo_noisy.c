@@ -6,17 +6,17 @@
 #include <assert.h>
 #include <math.h>
 
-#define SLICES 10
-#define DEMO_INDEX ((int) DEMO_CLOSED)
+#define SLICES 100
+#define DEMO_INDEX ((int) DEMO_NOISY)
 
-static par_streamlines_position vertices[SLICES + 6];
+static par_streamlines_position vertices[SLICES * 2];
 
-static uint16_t spine_lengths[] = { SLICES, 3, 3 };
+static uint16_t spine_lengths[] = { SLICES, SLICES };
 
-void init_demo_closed(app_state* app) {
+void init_demo_noisy(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 20 };
+    par_streamlines_config config = { .thickness = 3 };
 
     state->context = par_streamlines_create_context(config);
 
@@ -61,14 +61,39 @@ void init_demo_closed(app_state* app) {
             "#version 330\n"
             "uniform vec4 resolution\n;"
             "layout(location=0) in vec2 position;\n"
+            "layout(location=1) in vec4 annotation;\n"
+            "out vec4 vannotation;\n"
+            "\n"
+            "\n"
+            "// <https://www.shadertoy.com/view/4dS3Wd>\n"
+            "// By Morgan McGuire @morgan3d, http://graphicscodex.com\n"
+            "// \n"
+            "float hash(float n) { return fract(sin(n) * 1e4); }\n"
+            "float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }\n"
+            "float noise(float x) {\n"
+            "  float i = floor(x);\n"
+            "  float f = fract(x);\n"
+            "  float u = f * f * (3.0 - 2.0 * f);\n"
+            "  return mix(hash(i), hash(i + 1.0), u);\n"
+            "}\n"
+            "\n"
+            "\n"
             "void main() {\n"
             "  vec2 p = 2.0 * position * resolution.xy - 1.0;"
+            "  vec2 spine_to_edge = annotation.zw;\n"
+            // "  float wave = 0.5 + 0.5 * sin(10.0 * 6.28318 * annotation.x);\n"
+            // "  p += spine_to_edge * 0.01 * wave;\n"
+            "  p += annotation.y * spine_to_edge * 0.005 * noise(100.0 * sin(6.28 * annotation.x));\n"
             "  gl_Position = vec4(p, 0.0, 1.0);\n"
+            "  vannotation = annotation;\n"
             "}\n",
         .fs.source =
             "#version 330\n"
+            "in vec4 vannotation;\n"
             "out vec4 frag_color;\n"
             "void main() {\n"
+            "  float distance_along_spine = vannotation.x;\n"
+            "  float spine_length = vannotation.y;\n"
             "  frag_color = vec4(0.0, 0.0, 0.0, 0.8);\n"
             "}\n"
     });
@@ -100,7 +125,7 @@ void init_demo_closed(app_state* app) {
     });
 }
 
-void draw_demo_closed(app_state* app) {
+void draw_demo_noisy(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     uniform_params resolution = {
@@ -119,19 +144,12 @@ void draw_demo_closed(app_state* app) {
         vertices[i].y = 150 + 100 * sin(theta);
     }
 
-    vertices[SLICES + 0].x = 300+30;
-    vertices[SLICES + 0].y = 150;
-    vertices[SLICES + 1].x = 500+30;
-    vertices[SLICES + 1].y = 100;
-    vertices[SLICES + 2].x = 500+30;
-    vertices[SLICES + 2].y = 190;
-
-    vertices[SLICES + 3].x = 100-30;
-    vertices[SLICES + 3].y = 190;
-    vertices[SLICES + 4].x = 300-30;
-    vertices[SLICES + 4].y = 150;
-    vertices[SLICES + 5].x = 100-30;
-    vertices[SLICES + 5].y = 100;
+    float x = 100;
+    const float dx = 400.0f / SLICES;
+    for (int i = SLICES; i < SLICES * 2; i++, x += dx) {
+        vertices[i].x = x;
+        vertices[i].y = 150;
+    }
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
