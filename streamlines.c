@@ -29,7 +29,22 @@ void init_app() {
 }
 
 void frame() {
-    draw_demo_closed(&app);
+    switch (app.current_demo) {
+        case DEMO_SIMPLE:
+            draw_demo_simple(&app);
+            break;
+        case DEMO_WIREFRAME:
+            draw_demo_wireframe(&app);
+            break;
+        case DEMO_GRADIENT:
+            draw_demo_gradient(&app);
+            break;
+        case DEMO_CLOSED:
+            draw_demo_closed(&app);
+            break;
+        default:
+            exit(1);
+    }
 }
 
 void cleanup() {
@@ -50,6 +65,13 @@ void handler(const sapp_event* event) {
 }
 
 sapp_desc sokol_main(int argc, char* argv[]) {
+    app.current_demo = DEMO_SIMPLE;
+    if (argc > 1) {
+        int index = atoi(argv[1]);
+        if (index >= 0 && index < DEMO_COUNT) {
+            app.current_demo = index;
+        }
+    }
     return (sapp_desc){
         .init_cb = init_app,
         .frame_cb = frame,

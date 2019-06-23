@@ -30,6 +30,7 @@ typedef struct {
 typedef struct {
     sg_pass_action pass_action;
     uint64_t start_time;
+    demo_type current_demo;
     demo_state demos[DEMO_COUNT];
 } app_state;
 

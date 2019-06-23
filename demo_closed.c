@@ -25,7 +25,7 @@ void init_demo_closed(app_state* app) {
         .num_spines = sizeof(spine_lengths) / sizeof(uint16_t),
         .vertices = vertices,
         .spine_lengths = spine_lengths,
-        .closed = false
+        .closed = true
     };
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);
@@ -75,8 +75,7 @@ void init_demo_closed(app_state* app) {
             "void main() {\n"
             "  float distance_along_spine = vannotation.x;\n"
             "  float spine_length = vannotation.y;\n"
-            "  float t = 0.5 + 0.5 * sin(100.0 * distance_along_spine / spine_length);\n"
-            "  frag_color = vec4(t, t, t, 1);\n"
+            "  frag_color = vec4(0.0, 0.0, 0.0, 0.8);\n"
             "}\n"
     });
 
@@ -88,6 +87,11 @@ void init_demo_closed(app_state* app) {
 
     state->pipeline = sg_make_pipeline(&(sg_pipeline_desc){
         .shader = program,
+        .blend = {
+            .enabled=  true,
+            .src_factor_rgb = SG_BLENDFACTOR_SRC_ALPHA,
+            .dst_factor_rgb = SG_BLENDFACTOR_ONE_MINUS_SRC_ALPHA,
+        },
         .index_type = SG_INDEXTYPE_UINT32,
         .layout = {
             .attrs = {
@@ -121,18 +125,18 @@ void draw_demo_closed(app_state* app) {
         vertices[i].y = 150 + 100 * sin(theta);
     }
 
-    vertices[SLICES + 0].x = 300;
+    vertices[SLICES + 0].x = 300+30;
     vertices[SLICES + 0].y = 150;
-    vertices[SLICES + 1].x = 500;
+    vertices[SLICES + 1].x = 500+30;
     vertices[SLICES + 1].y = 100;
-    vertices[SLICES + 2].x = 500;
+    vertices[SLICES + 2].x = 500+30;
     vertices[SLICES + 2].y = 190;
 
-    vertices[SLICES + 3].x = 100;
+    vertices[SLICES + 3].x = 100-30;
     vertices[SLICES + 3].y = 190;
-    vertices[SLICES + 4].x = 300;
+    vertices[SLICES + 4].x = 300-30;
     vertices[SLICES + 4].y = 150;
-    vertices[SLICES + 5].x = 100;
+    vertices[SLICES + 5].x = 100-30;
     vertices[SLICES + 5].y = 100;
 
     par_streamlines_mesh* mesh;
