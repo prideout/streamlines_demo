@@ -79,10 +79,9 @@ void init_demo_gradient(app_state* app) {
             "in vec4 vannotation;\n"
             "out vec4 frag_color;\n"
             "void main() {\n"
-            "  float distance_along_spine = vannotation.x;\n"
-            "  float spine_length = vannotation.y;\n"
-            "  float t = distance_along_spine / spine_length;\n"
-            "  frag_color = vec4(t, t, t, 1);\n"
+            "  float t = vannotation.x;\n"
+            "  vec3 color = mix(vec3(.0, .0, .8), vec3(.0, .8, .0), t);"
+            "  frag_color = vec4(color, 1);\n"
             "}\n"
     });
 
