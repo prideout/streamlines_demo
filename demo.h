@@ -64,3 +64,10 @@ void draw_demo_noisy(app_state* app);
 
 void init_demo_streamlines(app_state* app);
 void draw_demo_streamlines(app_state* app);
+
+const char* get_vertex_shader(demo_type);
+const char* get_fragment_shader(demo_type);
+
+float get_framebuffer_scale();
+int get_framebuffer_width();
+int get_framebuffer_height();

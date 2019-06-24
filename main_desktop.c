@@ -81,3 +81,15 @@ sapp_desc sokol_main(int argc, char* argv[]) {
         .window_title = "streamlines",
     };
 }
+
+int get_framebuffer_width() {
+    return sapp_width();
+}
+
+int get_framebuffer_height() {
+    return sapp_height();
+}
+
+float get_framebuffer_scale() {
+    return 1.0;
+}
