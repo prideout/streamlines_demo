@@ -1,7 +1,7 @@
 #include "sokol_app.h"
 #include "sokol_time.h"
 
-#include "streamlines.h"
+#include "demo.h"
 
 #include <assert.h>
 #include <math.h>
@@ -118,11 +118,11 @@ void draw_demo_wireframe(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
 
-    vertices[1].y = 150 + 100 * sin(M_PI * elapsed_seconds);
-    vertices[3].x = 400 + 50 * cos(M_PI * elapsed_seconds);
-    vertices[3].y = 150 + 50 * sin(M_PI * elapsed_seconds);
-    vertices[4].x = 400 - 50 * cos(M_PI * elapsed_seconds);
-    vertices[4].y = 150 - 50 * sin(M_PI * elapsed_seconds);
+    vertices[1].y = 150 + 100 * sin(PI * elapsed_seconds);
+    vertices[3].x = 400 + 50 * cos(PI * elapsed_seconds);
+    vertices[3].y = 150 + 50 * sin(PI * elapsed_seconds);
+    vertices[4].x = 400 - 50 * cos(PI * elapsed_seconds);
+    vertices[4].y = 150 - 50 * sin(PI * elapsed_seconds);
 
     par_streamlines_mesh* mesh;
     mesh = par_streamlines_draw_lines(state->context, state->spines);

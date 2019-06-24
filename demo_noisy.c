@@ -1,7 +1,7 @@
 #include "sokol_app.h"
 #include "sokol_time.h"
 
-#include "streamlines.h"
+#include "demo.h"
 
 #include <assert.h>
 #include <math.h>
@@ -137,7 +137,7 @@ void draw_demo_noisy(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
 
-    const float dtheta = M_PI * 2 / SLICES;
+    const float dtheta = PI * 2 / SLICES;
     float theta = elapsed_seconds;
     for (int i = 0; i < SLICES; i++, theta += dtheta) {
         vertices[i].x = 300 + 100 * cos(theta);

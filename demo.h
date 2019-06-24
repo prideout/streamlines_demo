@@ -4,6 +4,8 @@
 
 #include <par/par_streamlines.h>
 
+#define PI 3.14159265358979323846
+
 typedef enum {
     DEMO_SIMPLE = 0,
     DEMO_WIREFRAME = 1,
@@ -12,6 +14,7 @@ typedef enum {
     DEMO_ENDCAP = 4, // <-- this has variations
     DEMO_NOISY = 5,  // <-- this has variations
     DEMO_STREAMLINES = 6,  // <-- this has variations
+    // TODO: cubic and quadratic curves
 } demo_type;
 
 #define DEMO_COUNT 7
