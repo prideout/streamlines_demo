@@ -1,6 +1,4 @@
-MKDIR_P ?= mkdir -p
-BUILD_DIR ?= ./build
-
+BUILD_DIR = build
 CC=clang
 FRAMEWORKS=-framework Foundation -framework Cocoa -framework AppKit -framework OpenGL
 LIBRARIES=-lobjc
@@ -35,20 +33,24 @@ streamlines: $(OBJECTS)
 	 $(CC) $(LDFLAGS) -o streamlines $^
 
 web: $(JSOBJECTS)
-	source $(EMSDK)/emsdk_env.sh
-	emcc -o streamlines.js ${EMLINKARGS} ${JSOBJECTS}
+	emcc -o streamlines.js ${EMLINKARGS} ${JSOBJECTS} $(CFLAGS)
 
-$(BUILD_DIR)/%.js.o: %.c $(EXTRA_DEPS)
-	$(MKDIR_P) $(dir $@)
-	emcc -c -o $@ $< $(CFLAGS)
+# This doesn't actually work because it doesn't import the environment.
+# I'll leave it here as a hint to humans.
+activate_emscripten:
+	. ${EMSDK}/emsdk_env.sh
 
-$(BUILD_DIR)/%.o: %.c $(EXTRA_DEPS)
-	$(MKDIR_P) $(dir $@)
-	$(CC) -c -o $@ $< $(CFLAGS)
-
-$(BUILD_DIR)/sokol_mac.o:
-	$(MKDIR_P) $(dir $@)
-	$(CC) -fobjc-arc -c -Wall -O3 extern/sokol_mac.m -o $@
+$(BUILD_DIR):
+	mkdir -p $@
 
 clean:
-	rm -rf $(BUILD_DIR) streamlines
+	rm -rf $(BUILD_DIR) streamlines streamlines.js streamlines.wasm
+
+$(BUILD_DIR)/%.js.o: %.c $(EXTRA_DEPS) activate_emscripten | $(BUILD_DIR)
+	emcc -c -o $@ $< $(CFLAGS)
+
+$(BUILD_DIR)/%.o: %.c $(EXTRA_DEPS) | $(BUILD_DIR)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(BUILD_DIR)/sokol_mac.o: $(BUILD_DIR)
+	$(CC) -fobjc-arc -c -Wall -O3 extern/sokol_mac.m -o $@
