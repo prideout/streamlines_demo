@@ -16,7 +16,7 @@ app_state app;
 
 EM_JS(void, init_gl, (), {
     const options = {};
-    const canvas = document.getElementById('glcanvas');
+    const canvas = window.current_canvas;
     const ctx = canvas.getContext("webgl2", options);
     const handle = GL.registerContext(ctx, options);
     GL.makeContextCurrent(handle);
@@ -28,12 +28,10 @@ EM_JS(void, init_gl, (), {
 
 void update_framebuffer_dims() {
     app.framebuffer_width = EM_ASM_INT({
-        const canvas = document.getElementById('glcanvas');
-        return canvas.width;
+        return window.current_canvas.width;
     }, 0);
     app.framebuffer_height = EM_ASM_INT({
-        const canvas = document.getElementById('glcanvas');
-        return canvas.height;
+        return window.current_canvas.height;
     }, 0);
     app.framebuffer_scale = EM_ASM_DOUBLE({
         return 1.0 / window.devicePixelRatio;
@@ -41,7 +39,6 @@ void update_framebuffer_dims() {
 }
 
 int main(int argc, char* argv[]) {
-
     init_gl();
     update_framebuffer_dims();
     sg_setup(&(sg_desc){});
@@ -53,6 +50,8 @@ int main(int argc, char* argv[]) {
             .val = {0.8f, 0.8f, 0.8f, 1.0f}
         }
     };
+
+    app.current_demo = EM_ASM_INT({ return window.current_demo }, 0);
 
     switch (app.current_demo) {
         case DEMO_SIMPLE: init_demo_simple(&app); break;

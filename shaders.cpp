@@ -20,7 +20,19 @@ void main() {
     vec2 p = 2.0 * position * resolution.xy - 1.0;
     gl_Position = vec4(p, 0.0, 1.0);
     vannotation = annotation;
-})"
+})",
+
+// Wireframe Vertex Shader
+PREAMBLE R"(
+uniform vec4 resolution;
+layout(location=0) in vec2 position;
+layout(location=1) in vec4 annotation;
+out vec4 vannotation;
+void main() {
+  vec2 p = 2.0 * position * resolution.xy - 1.0;
+  gl_Position = vec4(p, 0.0, 1.0);
+  vannotation = annotation;
+})",
 
 };
 
@@ -33,7 +45,16 @@ in vec4 vannotation;
 out vec4 frag_color;
 void main() {
     frag_color = vec4(0, 0, 0, 1);
-})"
+})",
+
+// Wireframe Fragment Shader
+PREAMBLE R"(
+precision highp float;
+in vec4 vannotation;
+out vec4 frag_color;
+void main() {
+  frag_color = vec4(0, 0, 0, 1);
+})",
 
 };
 

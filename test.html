@@ -20,7 +20,12 @@ canvas {
 <p>
 Welcome.
 </p>
-<canvas id="glcanvas">
+<canvas id="simple">
+</canvas>
+
+<hr>
+
+<canvas id="wireframe">
 </canvas>
 
 <script src="streamlines.js"></script>
@@ -28,16 +33,29 @@ Welcome.
 <script>
 
 Streamlines().then(function(wasm) {
-
+    window.current_canvas = document.getElementById('simple');
+    window.current_demo = 0;
     wasm._main();
-
     const draw = () => {
         wasm._draw();
         window.requestAnimationFrame(draw);
     }
-
     draw();
+    start_demo('wireframe');
 });
+
+function start_demo(canvas_id) {
+    Streamlines().then(function(wasm) {
+        window.current_canvas = document.getElementById(canvas_id);
+        window.current_demo = 1;
+        wasm._main();
+        const draw = () => {
+            wasm._draw();
+            window.requestAnimationFrame(draw);
+        }
+        draw();
+    });
+}
 
 </script>
 
