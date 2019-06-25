@@ -125,7 +125,7 @@ void draw_demo_noisy(app_state* app) {
         mesh->vertex_annotations,
         mesh->num_vertices * sizeof(par_streamlines_annotation));
 
-    sg_begin_default_pass(&app->pass_action, app->framebuffer_width, app->framebuffer_height);
+    sg_begin_default_pass(&state->pass_action, app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));

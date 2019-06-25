@@ -48,13 +48,14 @@ void update_framebuffer_dims() {
 int main(int argc, char* argv[]) {
     int context_handle = init_gl();
     int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
-    app.demos[current_demo].context_handle = context_handle;
 
     update_framebuffer_dims();
     sg_setup(&(sg_desc){});
     stm_setup();
 
-    app.pass_action = (sg_pass_action) {
+    app.demos[current_demo].em_context = context_handle;
+    app.demos[current_demo].gfx_context = sg_setup_context();
+    app.demos[current_demo].pass_action = (sg_pass_action) {
         .colors[0] = {
             .action = SG_ACTION_CLEAR,
             .val = {0.8f, 0.8f, 0.8f, 1.0f}
@@ -76,7 +77,8 @@ int main(int argc, char* argv[]) {
 
 void draw() {
     int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
-    make_current(app.demos[current_demo].context_handle);
+    make_current(app.demos[current_demo].em_context);
+    sg_activate_context(app.demos[current_demo].gfx_context);
     switch (current_demo) {
         case DEMO_SIMPLE: draw_demo_simple(&app); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app); break;

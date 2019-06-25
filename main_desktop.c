@@ -8,19 +8,20 @@
 #include "demo.h"
 
 app_state app;
+int current_demo;
 
 void init_app() {
     sg_setup(&(sg_desc){});
     stm_setup();
 
-    app.pass_action = (sg_pass_action) {
+    app.demos[current_demo].pass_action = (sg_pass_action) {
         .colors[0] = {
             .action = SG_ACTION_CLEAR,
             .val = {0.8f, 0.8f, 0.8f, 1.0f}
         }
     };
 
-    switch (app.current_demo) {
+    switch (current_demo) {
         case DEMO_SIMPLE: init_demo_simple(&app); break;
         case DEMO_WIREFRAME: init_demo_wireframe(&app); break;
         case DEMO_GRADIENT: init_demo_gradient(&app); break;
@@ -34,7 +35,7 @@ void init_app() {
 }
 
 void frame() {
-    switch (app.current_demo) {
+    switch (current_demo) {
         case DEMO_SIMPLE: draw_demo_simple(&app); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app); break;
         case DEMO_GRADIENT: draw_demo_gradient(&app); break;
@@ -63,11 +64,11 @@ void handler(const sapp_event* event) {
 }
 
 sapp_desc sokol_main(int argc, char* argv[]) {
-    app.current_demo = DEMO_SIMPLE;
+    current_demo = DEMO_SIMPLE;
     if (argc > 1) {
         int index = atoi(argv[1]);
         if (index >= 0 && index < DEMO_COUNT) {
-            app.current_demo = index;
+            current_demo = index;
         }
     }
 

@@ -137,7 +137,7 @@ void draw_demo_endcap(app_state* app) {
         mesh->vertex_lengths,
         mesh->num_vertices * sizeof(float));
 
-    sg_begin_default_pass(&app->pass_action, app->framebuffer_width, app->framebuffer_height);
+    sg_begin_default_pass(&state->pass_action, app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));

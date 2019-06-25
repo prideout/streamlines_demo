@@ -21,6 +21,7 @@ typedef enum {
 
 typedef struct {
     par_streamlines_context* context;
+    sg_pass_action pass_action;
     sg_pipeline pipeline;
     sg_bindings bindings;
     sg_buffer positions_buffer;
@@ -28,11 +29,11 @@ typedef struct {
     sg_buffer lengths_buffer;
     int num_elements;
     par_streamlines_spine_list spines;
-    int context_handle;
+    int em_context;
+    sg_context gfx_context;
 } demo_state;
 
 typedef struct {
-    sg_pass_action pass_action;
     uint64_t start_time;
     demo_state demos[DEMO_COUNT];
     int framebuffer_width;
