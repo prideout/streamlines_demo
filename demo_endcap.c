@@ -21,7 +21,7 @@ static uint16_t spine_lengths[] = { 3, 2 };
 void init_demo_endcap(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 15 };
+    par_streamlines_config config = { .thickness = 30 };
     config.u_mode = PAR_U_MODE_DISTANCE;
 
     state->context = par_streamlines_create_context(config);

@@ -158,8 +158,8 @@ precision highp float;
 in vec4 varying_annotation;
 in float varying_length;
 out vec4 frag_color;
-const float radius = 7.5;
-const float radius2 = 7.5 * 7.5;
+const float radius = 15.0;
+const float radius2 = radius * radius;
 void main() {
   float dist1 = abs(varying_annotation.x);
   float dist2 = varying_length - abs(varying_annotation.x);
@@ -170,7 +170,8 @@ void main() {
       float y = varying_annotation.y * radius;
       float d2 = x * x + y * y;
       float t = fwidth(d2);
-      alpha = smoothstep(radius2 + t, radius2, d2);
+      alpha = 1.0 - 0.99 * smoothstep(radius2 - t, radius2 + t, d2);
+      // alpha = 1.0 - 0.99 * step(radius2, d2);
   }
   frag_color = vec4(0, 0, 0, alpha);
 })",
