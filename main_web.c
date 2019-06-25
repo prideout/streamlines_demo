@@ -34,7 +34,8 @@ void update_framebuffer_dims() {
         return window.current_canvas.height;
     }, 0);
     app.framebuffer_scale = EM_ASM_DOUBLE({
-        return 1.0 / window.devicePixelRatio;
+        // For now we are using half-size canvases.
+        return 2.0 / window.devicePixelRatio;
     }, 0);
 }
 
