@@ -1,4 +1,3 @@
-#include "sokol_app.h"
 #include "sokol_time.h"
 
 #include "demo.h"
@@ -57,20 +56,8 @@ void init_demo_closed(app_state* app) {
                 [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 }
             }
         },
-        .vs.source = 
-            "#version 330\n"
-            "uniform vec4 resolution\n;"
-            "layout(location=0) in vec2 position;\n"
-            "void main() {\n"
-            "  vec2 p = 2.0 * position * resolution.xy - 1.0;"
-            "  gl_Position = vec4(p, 0.0, 1.0);\n"
-            "}\n",
-        .fs.source =
-            "#version 330\n"
-            "out vec4 frag_color;\n"
-            "void main() {\n"
-            "  frag_color = vec4(0.0, 0.0, 0.0, 0.8);\n"
-            "}\n"
+        .vs.source = get_vertex_shader(DEMO_INDEX),
+        .fs.source = get_fragment_shader(DEMO_INDEX),
     });
 
     state->bindings = (sg_bindings) {
@@ -103,11 +90,12 @@ void init_demo_closed(app_state* app) {
 void draw_demo_closed(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
+    float scale = app->framebuffer_scale;
     uniform_params resolution = {
-        1.0f / sapp_width(),
-        1.0f / sapp_height(),
-        sapp_width(),
-        sapp_height()
+        1.0 / (scale * app->framebuffer_width),
+        1.0 / (scale * app->framebuffer_height),
+        scale * app->framebuffer_width,
+        scale * app->framebuffer_height
     };
 
     demo_state* state = &app->demos[DEMO_INDEX];
@@ -144,7 +132,7 @@ void draw_demo_closed(app_state* app) {
         mesh->vertex_annotations,
         mesh->num_vertices * sizeof(par_streamlines_annotation));
 
-    sg_begin_default_pass(&app->pass_action, sapp_width(), sapp_height());
+    sg_begin_default_pass(&app->pass_action, app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));

@@ -24,13 +24,20 @@ Welcome.
 <canvas id="simple"></canvas><hr>
 <canvas id="wireframe"></canvas><hr>
 <canvas id="gradient"></canvas><hr>
+<canvas id="closed"></canvas><hr>
+<canvas id="endcap"></canvas><hr>
+<canvas id="noisy"></canvas><hr>
+<canvas id="streamlines"></canvas><hr>
 
 <script src="streamlines.js"></script>
 <script>
-
             start_demo('simple', 0)
 .then(() => start_demo('wireframe', 1))
-.then(() => start_demo('gradient', 2));
+.then(() => start_demo('gradient', 2))
+.then(() => start_demo('closed', 3))
+.then(() => start_demo('endcap', 4))
+.then(() => start_demo('noisy', 5))
+.then(() => start_demo('streamlines', 6));
 
 function start_demo(canvas_id, demo_index) {
     return new Promise(function(resolve, reject) {

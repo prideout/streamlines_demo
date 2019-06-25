@@ -1,4 +1,3 @@
-#include "sokol_app.h"
 #include "sokol_time.h"
 
 #include "demo.h"
@@ -57,45 +56,8 @@ void init_demo_noisy(app_state* app) {
                 [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 }
             }
         },
-        .vs.source = 
-            "#version 330\n"
-            "uniform vec4 resolution\n;"
-            "layout(location=0) in vec2 position;\n"
-            "layout(location=1) in vec4 annotation;\n"
-            "out vec4 vannotation;\n"
-            "\n"
-            "\n"
-            "// <https://www.shadertoy.com/view/4dS3Wd>\n"
-            "// By Morgan McGuire @morgan3d, http://graphicscodex.com\n"
-            "// \n"
-            "float hash(float n) { return fract(sin(n) * 1e4); }\n"
-            "float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }\n"
-            "float noise(float x) {\n"
-            "  float i = floor(x);\n"
-            "  float f = fract(x);\n"
-            "  float u = f * f * (3.0 - 2.0 * f);\n"
-            "  return mix(hash(i), hash(i + 1.0), u);\n"
-            "}\n"
-            "\n"
-            "\n"
-            "void main() {\n"
-            "  vec2 p = 2.0 * position * resolution.xy - 1.0;"
-            "  vec2 spine_to_edge = annotation.zw;\n"
-            // "  float wave = 0.5 + 0.5 * sin(10.0 * 6.28318 * annotation.x);\n"
-            // "  p += spine_to_edge * 0.01 * wave;\n"
-            "  p += annotation.y * spine_to_edge * 0.005 * noise(100.0 * sin(6.28 * annotation.x));\n"
-            "  gl_Position = vec4(p, 0.0, 1.0);\n"
-            "  vannotation = annotation;\n"
-            "}\n",
-        .fs.source =
-            "#version 330\n"
-            "in vec4 vannotation;\n"
-            "out vec4 frag_color;\n"
-            "void main() {\n"
-            "  float distance_along_spine = vannotation.x;\n"
-            "  float spine_length = vannotation.y;\n"
-            "  frag_color = vec4(0.0, 0.0, 0.0, 0.8);\n"
-            "}\n"
+        .vs.source = get_vertex_shader(DEMO_INDEX),
+        .fs.source = get_fragment_shader(DEMO_INDEX)
     });
 
     state->bindings = (sg_bindings) {
@@ -128,11 +90,12 @@ void init_demo_noisy(app_state* app) {
 void draw_demo_noisy(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
+    float scale = app->framebuffer_scale;
     uniform_params resolution = {
-        1.0f / sapp_width(),
-        1.0f / sapp_height(),
-        sapp_width(),
-        sapp_height()
+        1.0 / (scale * app->framebuffer_width),
+        1.0 / (scale * app->framebuffer_height),
+        scale * app->framebuffer_width,
+        scale * app->framebuffer_height
     };
 
     demo_state* state = &app->demos[DEMO_INDEX];
@@ -162,7 +125,7 @@ void draw_demo_noisy(app_state* app) {
         mesh->vertex_annotations,
         mesh->num_vertices * sizeof(par_streamlines_annotation));
 
-    sg_begin_default_pass(&app->pass_action, sapp_width(), sapp_height());
+    sg_begin_default_pass(&app->pass_action, app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
