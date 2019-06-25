@@ -35,6 +35,9 @@ typedef struct {
     uint64_t start_time;
     demo_type current_demo;
     demo_state demos[DEMO_COUNT];
+    int framebuffer_width;
+    int framebuffer_height;
+    float framebuffer_scale;
 } app_state;
 
 typedef struct {
@@ -67,7 +70,3 @@ void draw_demo_streamlines(app_state* app);
 
 const char* get_vertex_shader(demo_type);
 const char* get_fragment_shader(demo_type);
-
-float get_framebuffer_scale();
-int get_framebuffer_width();
-int get_framebuffer_height();

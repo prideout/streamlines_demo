@@ -92,12 +92,12 @@ void init_demo_simple(app_state* app) {
 void draw_demo_simple(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
-    float scale = get_framebuffer_scale();
+    float scale = app->framebuffer_scale;
     uniform_params resolution = {
-        1.0 / (scale * get_framebuffer_width()),
-        1.0 / (scale * get_framebuffer_height()),
-        scale * get_framebuffer_width(),
-        scale * get_framebuffer_height()
+        1.0 / (scale * app->framebuffer_width),
+        1.0 / (scale * app->framebuffer_height),
+        scale * app->framebuffer_width,
+        scale * app->framebuffer_height
     };
 
     demo_state* state = &app->demos[DEMO_INDEX];
@@ -120,7 +120,7 @@ void draw_demo_simple(app_state* app) {
         mesh->num_vertices * sizeof(par_streamlines_annotation));
 
     sg_begin_default_pass(&app->pass_action,
-            get_framebuffer_width(), get_framebuffer_height());
+            app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));

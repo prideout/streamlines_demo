@@ -22,25 +22,28 @@ EM_JS(void, init_gl, (), {
     GL.makeContextCurrent(handle);
 
     const dpr = window.devicePixelRatio;
-    canvas.width = 600 * dpr;
-    canvas.height = 300 * dpr;
+    canvas.width = canvas.clientWidth * dpr;
+    canvas.height = canvas.clientHeight * dpr;
 });
 
-int get_framebuffer_width() {
-    return 600 * 2;
-}
-
-int get_framebuffer_height() {
-    return 300 * 2;
-}
-
-float get_framebuffer_scale() {
-    return 0.5;
+void update_framebuffer_dims() {
+    app.framebuffer_width = EM_ASM_INT({
+        const canvas = document.getElementById('glcanvas');
+        return canvas.width;
+    }, 0);
+    app.framebuffer_height = EM_ASM_INT({
+        const canvas = document.getElementById('glcanvas');
+        return canvas.height;
+    }, 0);
+    app.framebuffer_scale = EM_ASM_DOUBLE({
+        return 1.0 / window.devicePixelRatio;
+    }, 0);
 }
 
 int main(int argc, char* argv[]) {
 
     init_gl();
+    update_framebuffer_dims();
     sg_setup(&(sg_desc){});
     stm_setup();
 

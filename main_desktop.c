@@ -70,26 +70,19 @@ sapp_desc sokol_main(int argc, char* argv[]) {
             app.current_demo = index;
         }
     }
+
+    app.framebuffer_width = 600;
+    app.framebuffer_height = 300;
+    app.framebuffer_scale = 1.0f;
+
     return (sapp_desc){
         .init_cb = init_app,
         .frame_cb = frame,
         .cleanup_cb = cleanup,
         .event_cb = handler,
-        .width = 600,
-        .height = 300,
+        .width = app.framebuffer_width,
+        .height = app.framebuffer_height,
         .sample_count = 16,
         .window_title = "streamlines",
     };
-}
-
-int get_framebuffer_width() {
-    return sapp_width();
-}
-
-int get_framebuffer_height() {
-    return sapp_height();
-}
-
-float get_framebuffer_scale() {
-    return 1.0;
 }
