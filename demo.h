@@ -28,12 +28,12 @@ typedef struct {
     sg_buffer lengths_buffer;
     int num_elements;
     par_streamlines_spine_list spines;
+    int context_handle;
 } demo_state;
 
 typedef struct {
     sg_pass_action pass_action;
     uint64_t start_time;
-    demo_type current_demo;
     demo_state demos[DEMO_COUNT];
     int framebuffer_width;
     int framebuffer_height;

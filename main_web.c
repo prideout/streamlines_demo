@@ -14,7 +14,7 @@
 
 app_state app;
 
-EM_JS(void, init_gl, (), {
+EM_JS(int, init_gl, (), {
     const options = {};
     const canvas = window.current_canvas;
     const ctx = canvas.getContext("webgl2", options);
@@ -24,6 +24,12 @@ EM_JS(void, init_gl, (), {
     const dpr = window.devicePixelRatio;
     canvas.width = canvas.clientWidth * dpr;
     canvas.height = canvas.clientHeight * dpr;
+
+    return handle;
+});
+
+EM_JS(void, make_current, (int handle), {
+    GL.makeContextCurrent(handle);
 });
 
 void update_framebuffer_dims() {
@@ -40,7 +46,10 @@ void update_framebuffer_dims() {
 }
 
 int main(int argc, char* argv[]) {
-    init_gl();
+    int context_handle = init_gl();
+    int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+    app.demos[current_demo].context_handle = context_handle;
+
     update_framebuffer_dims();
     sg_setup(&(sg_desc){});
     stm_setup();
@@ -52,9 +61,7 @@ int main(int argc, char* argv[]) {
         }
     };
 
-    app.current_demo = EM_ASM_INT({ return window.current_demo }, 0);
-
-    switch (app.current_demo) {
+    switch (current_demo) {
         case DEMO_SIMPLE: init_demo_simple(&app); break;
         case DEMO_WIREFRAME: init_demo_wireframe(&app); break;
         case DEMO_GRADIENT: init_demo_gradient(&app); break;
@@ -68,7 +75,9 @@ int main(int argc, char* argv[]) {
 }
 
 void draw() {
-    switch (app.current_demo) {
+    int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+    make_current(app.demos[current_demo].context_handle);
+    switch (current_demo) {
         case DEMO_SIMPLE: draw_demo_simple(&app); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app); break;
         case DEMO_GRADIENT: draw_demo_gradient(&app); break;

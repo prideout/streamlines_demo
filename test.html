@@ -46,6 +46,7 @@ function start_demo(canvas_id, demo_index) {
             window.current_demo = demo_index;
             wasm._main();
             const draw = () => {
+                window.current_demo = demo_index;
                 wasm._draw();
                 window.requestAnimationFrame(draw);
             }
