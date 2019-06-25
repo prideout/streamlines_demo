@@ -1,4 +1,3 @@
-#include "sokol_app.h"
 #include "sokol_time.h"
 
 #include "demo.h"
@@ -63,26 +62,8 @@ void init_demo_gradient(app_state* app) {
                 [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 }
             }
         },
-        .vs.source = 
-            "#version 330\n"
-            "uniform vec4 resolution\n;"
-            "layout(location=0) in vec2 position;\n"
-            "layout(location=1) in vec4 annotation;\n"
-            "out vec4 vannotation;\n"
-            "void main() {\n"
-            "  vec2 p = 2.0 * position * resolution.xy - 1.0;"
-            "  gl_Position = vec4(p, 0.0, 1.0);\n"
-            "  vannotation = annotation;\n"
-            "}\n",
-        .fs.source =
-            "#version 330\n"
-            "in vec4 vannotation;\n"
-            "out vec4 frag_color;\n"
-            "void main() {\n"
-            "  float t = vannotation.x;\n"
-            "  vec3 color = mix(vec3(.0, .0, .8), vec3(.0, .8, .0), t);"
-            "  frag_color = vec4(color, 1);\n"
-            "}\n"
+        .vs.source = get_vertex_shader(DEMO_INDEX),
+        .fs.source = get_fragment_shader(DEMO_INDEX)
     });
 
     state->bindings = (sg_bindings) {
@@ -110,11 +91,12 @@ void init_demo_gradient(app_state* app) {
 void draw_demo_gradient(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
+    float scale = app->framebuffer_scale;
     uniform_params resolution = {
-        1.0f / sapp_width(),
-        1.0f / sapp_height(),
-        sapp_width(),
-        sapp_height()
+        1.0 / (scale * app->framebuffer_width),
+        1.0 / (scale * app->framebuffer_height),
+        scale * app->framebuffer_width,
+        scale * app->framebuffer_height
     };
 
     demo_state* state = &app->demos[DEMO_INDEX];
@@ -136,7 +118,7 @@ void draw_demo_gradient(app_state* app) {
         mesh->vertex_annotations,
         mesh->num_vertices * sizeof(par_streamlines_annotation));
 
-    sg_begin_default_pass(&app->pass_action, sapp_width(), sapp_height());
+    sg_begin_default_pass(&app->pass_action, app->framebuffer_width, app->framebuffer_height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
