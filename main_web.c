@@ -32,14 +32,14 @@ EM_JS(void, make_current, (int handle), {
     GL.makeContextCurrent(handle);
 });
 
-void update_framebuffer_dims() {
-    app.framebuffer_width = EM_ASM_INT({
+void update_dims() {
+    app.width = EM_ASM_INT({
         return window.current_canvas.width;
     }, 0);
-    app.framebuffer_height = EM_ASM_INT({
+    app.height = EM_ASM_INT({
         return window.current_canvas.height;
     }, 0);
-    app.framebuffer_scale = EM_ASM_DOUBLE({
+    app.pixel_ratio = EM_ASM_DOUBLE({
         // For now we are using half-size canvases.
         return 2.0 / window.devicePixelRatio;
     }, 0);
@@ -65,7 +65,7 @@ void start() {
         }
     };
 
-    update_framebuffer_dims();
+    update_dims();
 
     switch (current_demo) {
         case DEMO_SIMPLE: init_demo_simple(&app); break;

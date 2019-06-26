@@ -64,7 +64,8 @@ void handler(const sapp_event* event) {
 }
 
 sapp_desc sokol_main(int argc, char* argv[]) {
-    current_demo = DEMO_SIMPLE;
+    current_demo = DEMO_STREAMLINES;
+
     if (argc > 1) {
         int index = atoi(argv[1]);
         if (index >= 0 && index < DEMO_COUNT) {
@@ -72,17 +73,17 @@ sapp_desc sokol_main(int argc, char* argv[]) {
         }
     }
 
-    app.framebuffer_width = 600;
-    app.framebuffer_height = 300;
-    app.framebuffer_scale = 1.0f;
+    app.width = 600;
+    app.height = 300;
+    app.pixel_ratio = 1.0f;
 
     return (sapp_desc){
         .init_cb = init_app,
         .frame_cb = frame,
         .cleanup_cb = cleanup,
         .event_cb = handler,
-        .width = app.framebuffer_width,
-        .height = app.framebuffer_height,
+        .width = app.width,
+        .height = app.height,
         .sample_count = 16,
         .window_title = "streamlines",
     };

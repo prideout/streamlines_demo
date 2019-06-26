@@ -20,7 +20,7 @@ typedef enum {
 #define DEMO_COUNT 7
 
 typedef struct {
-    par_streamlines_context* context;
+    parsl_context* context;
     sg_pass_action pass_action;
     sg_pipeline pipeline;
     sg_bindings bindings;
@@ -28,7 +28,7 @@ typedef struct {
     sg_buffer annotations_buffer;
     sg_buffer lengths_buffer;
     int num_elements;
-    par_streamlines_spine_list spines;
+    parsl_spine_list spines;
     int em_context;
     sg_context gfx_context;
 } demo_state;
@@ -36,9 +36,9 @@ typedef struct {
 typedef struct {
     uint64_t start_time;
     demo_state demos[DEMO_COUNT];
-    int framebuffer_width;
-    int framebuffer_height;
-    float framebuffer_scale;
+    int width;
+    int height;
+    float pixel_ratio;
 } app_state;
 
 typedef struct {

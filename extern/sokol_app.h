@@ -686,8 +686,8 @@ typedef struct sapp_event {
     sapp_touchpoint touches[SAPP_MAX_TOUCHPOINTS];
     int window_width;
     int window_height;
-    int framebuffer_width;
-    int framebuffer_height;
+    int width;
+    int height;
 } sapp_event;
 
 typedef struct sapp_desc {
@@ -908,8 +908,8 @@ typedef struct {
     bool valid;
     int window_width;
     int window_height;
-    int framebuffer_width;
-    int framebuffer_height;
+    int width;
+    int height;
     int sample_count;
     int swap_interval;
     float dpi_scale;
@@ -1010,8 +1010,8 @@ _SOKOL_PRIVATE void _sapp_init_state(const sapp_desc* desc) {
     _sapp.first_frame = true;
     _sapp.window_width = _sapp_def(_sapp.desc.width, 640);
     _sapp.window_height = _sapp_def(_sapp.desc.height, 480);
-    _sapp.framebuffer_width = _sapp.window_width;
-    _sapp.framebuffer_height = _sapp.window_height;
+    _sapp.width = _sapp.window_width;
+    _sapp.height = _sapp.window_height;
     _sapp.sample_count = _sapp_def(_sapp.desc.sample_count, 1);
     _sapp.swap_interval = _sapp_def(_sapp.desc.swap_interval, 1);
     _sapp.html5_canvas_name = _sapp_def(_sapp.desc.html5_canvas_name, "canvas");
@@ -1032,8 +1032,8 @@ _SOKOL_PRIVATE void _sapp_init_event(sapp_event_type type) {
     _sapp.event.mouse_button = SAPP_MOUSEBUTTON_INVALID;
     _sapp.event.window_width = _sapp.window_width;
     _sapp.event.window_height = _sapp.window_height;
-    _sapp.event.framebuffer_width = _sapp.framebuffer_width;
-    _sapp.event.framebuffer_height = _sapp.framebuffer_height;
+    _sapp.event.width = _sapp.width;
+    _sapp.event.height = _sapp.height;
 }
 
 _SOKOL_PRIVATE bool _sapp_events_enabled(void) {
@@ -1250,24 +1250,24 @@ int main(int argc, char* argv[]) {
 _SOKOL_PRIVATE void _sapp_macos_update_dimensions(void) {
     #if defined(SOKOL_METAL)
         const CGSize fb_size = [_sapp_view_obj drawableSize];
-        _sapp.framebuffer_width = fb_size.width;
-        _sapp.framebuffer_height = fb_size.height;
+        _sapp.width = fb_size.width;
+        _sapp.height = fb_size.height;
     #elif defined(SOKOL_GLCORE33)
         const NSRect fb_rect = [_sapp_view_obj convertRectToBacking:[_sapp_view_obj frame]];
-        _sapp.framebuffer_width = fb_rect.size.width;
-        _sapp.framebuffer_height = fb_rect.size.height;
+        _sapp.width = fb_rect.size.width;
+        _sapp.height = fb_rect.size.height;
     #endif
     const NSRect bounds = [_sapp_view_obj bounds];
     _sapp.window_width = bounds.size.width;
     _sapp.window_height = bounds.size.height;
-    SOKOL_ASSERT((_sapp.framebuffer_width > 0) && (_sapp.framebuffer_height > 0));
-    _sapp.dpi_scale = (float)_sapp.framebuffer_width / (float)_sapp.window_width;
+    SOKOL_ASSERT((_sapp.width > 0) && (_sapp.height > 0));
+    _sapp.dpi_scale = (float)_sapp.width / (float)_sapp.window_width;
 }
 
 _SOKOL_PRIVATE void _sapp_macos_frame(void) {
     const NSPoint mouse_pos = [_sapp_macos_window_obj mouseLocationOutsideOfEventStream];
     _sapp.mouse_x = mouse_pos.x * _sapp.dpi_scale;
-    _sapp.mouse_y = _sapp.framebuffer_height - (mouse_pos.y * _sapp.dpi_scale) - 1;
+    _sapp.mouse_y = _sapp.height - (mouse_pos.y * _sapp.dpi_scale) - 1;
     _sapp_frame();
     if (_sapp.quit_requested || _sapp.quit_ordered) {
         [_sapp_macos_window_obj performClose:nil];
@@ -1281,14 +1281,14 @@ _SOKOL_PRIVATE void _sapp_macos_frame(void) {
         _sapp.window_width = screen_rect.size.width;
         _sapp.window_height = screen_rect.size.height;
         if (_sapp.desc.high_dpi) {
-            _sapp.framebuffer_width = 2 * _sapp.window_width;
-            _sapp.framebuffer_height = 2 * _sapp.window_height;
+            _sapp.width = 2 * _sapp.window_width;
+            _sapp.height = 2 * _sapp.window_height;
         }
         else {
-            _sapp.framebuffer_width = _sapp.window_width;
-            _sapp.framebuffer_height = _sapp.window_height;
+            _sapp.width = _sapp.window_width;
+            _sapp.height = _sapp.window_height;
         }
-        _sapp.dpi_scale = (float)_sapp.framebuffer_width / (float) _sapp.window_width;
+        _sapp.dpi_scale = (float)_sapp.width / (float) _sapp.window_width;
     }
     const NSUInteger style =
         NSWindowStyleMaskTitled |
@@ -1320,7 +1320,7 @@ _SOKOL_PRIVATE void _sapp_macos_frame(void) {
         _sapp_macos_window_obj.contentView = _sapp_view_obj;
         [_sapp_macos_window_obj makeFirstResponder:_sapp_view_obj];
         if (!_sapp.desc.high_dpi) {
-            CGSize drawable_size = { (CGFloat) _sapp.framebuffer_width, (CGFloat) _sapp.framebuffer_height };
+            CGSize drawable_size = { (CGFloat) _sapp.width, (CGFloat) _sapp.height };
             _sapp_view_obj.drawableSize = drawable_size;
         }
         _sapp_macos_update_dimensions();
@@ -1713,12 +1713,12 @@ _SOKOL_PRIVATE void _sapp_ios_update_dimensions(void) {
         cur_fb_height = (int) _sapp_view_obj.drawableHeight;
     #endif
     const bool dim_changed =
-        (_sapp.framebuffer_width != cur_fb_width) ||
-        (_sapp.framebuffer_height != cur_fb_height);
-    _sapp.framebuffer_width = cur_fb_width;
-    _sapp.framebuffer_height = cur_fb_height;
-    SOKOL_ASSERT((_sapp.framebuffer_width > 0) && (_sapp.framebuffer_height > 0));
-    _sapp.dpi_scale = (float)_sapp.framebuffer_width / (float) _sapp.window_width;
+        (_sapp.width != cur_fb_width) ||
+        (_sapp.height != cur_fb_height);
+    _sapp.width = cur_fb_width;
+    _sapp.height = cur_fb_height;
+    SOKOL_ASSERT((_sapp.width > 0) && (_sapp.height > 0));
+    _sapp.dpi_scale = (float)_sapp.width / (float) _sapp.window_width;
     if (dim_changed) {
         _sapp_ios_app_event(SAPP_EVENTTYPE_RESIZED);
     }
@@ -1770,14 +1770,14 @@ _SOKOL_PRIVATE void _sapp_ios_show_keyboard(bool shown) {
     _sapp.window_width = screen_rect.size.width;
     _sapp.window_height = screen_rect.size.height;
     if (_sapp.desc.high_dpi) {
-        _sapp.framebuffer_width = 2 * _sapp.window_width;
-        _sapp.framebuffer_height = 2 * _sapp.window_height;
+        _sapp.width = 2 * _sapp.window_width;
+        _sapp.height = 2 * _sapp.window_height;
     }
     else {
-        _sapp.framebuffer_width = _sapp.window_width;
-        _sapp.framebuffer_height = _sapp.window_height;
+        _sapp.width = _sapp.window_width;
+        _sapp.height = _sapp.window_height;
     }
-    _sapp.dpi_scale = (float)_sapp.framebuffer_width / (float) _sapp.window_width;
+    _sapp.dpi_scale = (float)_sapp.width / (float) _sapp.window_width;
     #if defined(SOKOL_METAL)
         _sapp_mtl_device_obj = MTLCreateSystemDefaultDevice();
         _sapp_ios_mtk_view_dlg_obj = [[_sapp_ios_mtk_view_dlg alloc] init];
@@ -2137,10 +2137,10 @@ _SOKOL_PRIVATE EM_BOOL _sapp_emsc_size_changed(int event_type, const EmscriptenU
     if (_sapp.desc.high_dpi) {
         _sapp.dpi_scale = emscripten_get_device_pixel_ratio();
     }
-    _sapp.framebuffer_width = (int) (w * _sapp.dpi_scale);
-    _sapp.framebuffer_height = (int) (h * _sapp.dpi_scale);
-    SOKOL_ASSERT((_sapp.framebuffer_width > 0) && (_sapp.framebuffer_height > 0));
-    emscripten_set_canvas_element_size(_sapp.html5_canvas_name, _sapp.framebuffer_width, _sapp.framebuffer_height);
+    _sapp.width = (int) (w * _sapp.dpi_scale);
+    _sapp.height = (int) (h * _sapp.dpi_scale);
+    SOKOL_ASSERT((_sapp.width > 0) && (_sapp.height > 0));
+    emscripten_set_canvas_element_size(_sapp.html5_canvas_name, _sapp.width, _sapp.height);
     if (_sapp_events_enabled()) {
         _sapp_init_event(SAPP_EVENTTYPE_RESIZED);
         _sapp_call_event(&_sapp.event);
@@ -2540,9 +2540,9 @@ _SOKOL_PRIVATE void _sapp_run(const sapp_desc* desc) {
     }
     _sapp.window_width = (int) w;
     _sapp.window_height = (int) h;
-    _sapp.framebuffer_width = (int) (w * _sapp.dpi_scale);
-    _sapp.framebuffer_height = (int) (h * _sapp.dpi_scale);
-    emscripten_set_canvas_element_size(_sapp.html5_canvas_name, _sapp.framebuffer_width, _sapp.framebuffer_height);
+    _sapp.width = (int) (w * _sapp.dpi_scale);
+    _sapp.height = (int) (h * _sapp.dpi_scale);
+    emscripten_set_canvas_element_size(_sapp.html5_canvas_name, _sapp.width, _sapp.height);
 
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
@@ -3438,8 +3438,8 @@ _SOKOL_PRIVATE  void _sapp_win32_gl_loadfuncs(void) {
 #define _SAPP_SAFE_RELEASE(class, obj) if (obj) { class##_Release(obj); obj=0; }
 _SOKOL_PRIVATE void _sapp_d3d11_create_device_and_swapchain(void) {
     DXGI_SWAP_CHAIN_DESC* sc_desc = &_sapp_dxgi_swap_chain_desc;
-    sc_desc->BufferDesc.Width = _sapp.framebuffer_width;
-    sc_desc->BufferDesc.Height = _sapp.framebuffer_height;
+    sc_desc->BufferDesc.Width = _sapp.width;
+    sc_desc->BufferDesc.Height = _sapp.height;
     sc_desc->BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     sc_desc->BufferDesc.RefreshRate.Numerator = 60;
     sc_desc->BufferDesc.RefreshRate.Denominator = 1;
@@ -3490,8 +3490,8 @@ _SOKOL_PRIVATE void _sapp_d3d11_create_default_render_target(void) {
     SOKOL_ASSERT(SUCCEEDED(hr) && _sapp_d3d11_rtv);
     D3D11_TEXTURE2D_DESC ds_desc;
     memset(&ds_desc, 0, sizeof(ds_desc));
-    ds_desc.Width = _sapp.framebuffer_width;
-    ds_desc.Height = _sapp.framebuffer_height;
+    ds_desc.Width = _sapp.width;
+    ds_desc.Height = _sapp.height;
     ds_desc.MipLevels = 1;
     ds_desc.ArraySize = 1;
     ds_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -3518,7 +3518,7 @@ _SOKOL_PRIVATE void _sapp_d3d11_destroy_default_render_target(void) {
 _SOKOL_PRIVATE void _sapp_d3d11_resize_default_render_target(void) {
     if (_sapp_dxgi_swap_chain) {
         _sapp_d3d11_destroy_default_render_target();
-        IDXGISwapChain_ResizeBuffers(_sapp_dxgi_swap_chain, 1, _sapp.framebuffer_width, _sapp.framebuffer_height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+        IDXGISwapChain_ResizeBuffers(_sapp_dxgi_swap_chain, 1, _sapp.width, _sapp.height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
         _sapp_d3d11_create_default_render_target();
     }
 }
@@ -3915,22 +3915,22 @@ _SOKOL_PRIVATE bool _sapp_win32_update_dimensions(void) {
         _sapp.window_height = (int)((float)(rect.bottom - rect.top) / _sapp_win32_window_scale);
         const int fb_width = (int)((float)_sapp.window_width * _sapp_win32_content_scale);
         const int fb_height = (int)((float)_sapp.window_height * _sapp_win32_content_scale);
-        if ((fb_width != _sapp.framebuffer_width) || (fb_height != _sapp.framebuffer_height)) {
-            _sapp.framebuffer_width = (int)((float)_sapp.window_width * _sapp_win32_content_scale);
-            _sapp.framebuffer_height = (int)((float)_sapp.window_height * _sapp_win32_content_scale);
+        if ((fb_width != _sapp.width) || (fb_height != _sapp.height)) {
+            _sapp.width = (int)((float)_sapp.window_width * _sapp_win32_content_scale);
+            _sapp.height = (int)((float)_sapp.window_height * _sapp_win32_content_scale);
             /* prevent a framebuffer size of 0 when window is minimized */
-            if (_sapp.framebuffer_width == 0) {
-                _sapp.framebuffer_width = 1;
+            if (_sapp.width == 0) {
+                _sapp.width = 1;
             }
-            if (_sapp.framebuffer_height == 0) {
-                _sapp.framebuffer_height = 1;
+            if (_sapp.height == 0) {
+                _sapp.height = 1;
             }
             return true;
         }
     }
     else {
         _sapp.window_width = _sapp.window_height = 1;
-        _sapp.framebuffer_width = _sapp.framebuffer_height = 1;
+        _sapp.width = _sapp.height = 1;
     }
     return false;
 }
@@ -4547,10 +4547,10 @@ _SOKOL_PRIVATE void _sapp_android_update_dimensions(ANativeWindow* window, bool 
     EGLBoolean egl_result_h = eglQuerySurface(state->display, state->surface, EGL_HEIGHT, &fb_h);
     SOKOL_ASSERT(egl_result_w == EGL_TRUE);
     SOKOL_ASSERT(egl_result_h == EGL_TRUE);
-    const bool fb_changed = (fb_w != _sapp.framebuffer_width) || (fb_h != _sapp.framebuffer_height);
-    _sapp.framebuffer_width = fb_w;
-    _sapp.framebuffer_height = fb_h;
-    _sapp.dpi_scale = (float)_sapp.framebuffer_width / (float)_sapp.window_width;
+    const bool fb_changed = (fb_w != _sapp.width) || (fb_h != _sapp.height);
+    _sapp.width = fb_w;
+    _sapp.height = fb_h;
+    _sapp.dpi_scale = (float)_sapp.width / (float)_sapp.window_width;
     if (win_changed || fb_changed || force_update) {
         if (!_sapp.first_frame) {
             SOKOL_LOG("SAPP_EVENTTYPE_RESIZED");
@@ -4635,8 +4635,8 @@ _SOKOL_PRIVATE bool _sapp_android_touch_event(const AInputEvent* e) {
     for (int32_t i = 0; i < _sapp.event.num_touches; i++) {
         sapp_touchpoint* dst = &_sapp.event.touches[i];
         dst->identifier = AMotionEvent_getPointerId(e, i);
-        dst->pos_x = (AMotionEvent_getRawX(e, i) / _sapp.window_width) * _sapp.framebuffer_width;
-        dst->pos_y = (AMotionEvent_getRawY(e, i) / _sapp.window_height) * _sapp.framebuffer_height;
+        dst->pos_x = (AMotionEvent_getRawX(e, i) / _sapp.window_width) * _sapp.width;
+        dst->pos_y = (AMotionEvent_getRawY(e, i) / _sapp.window_height) * _sapp.height;
 
         if (action == AMOTION_EVENT_ACTION_POINTER_DOWN ||
             action == AMOTION_EVENT_ACTION_POINTER_UP) {
@@ -5161,8 +5161,8 @@ static PFNGLXCREATECONTEXTATTRIBSARBPROC   _sapp_glx_CreateContextAttribsARB;
 static bool _sapp_glx_EXT_swap_control;
 static bool _sapp_glx_MESA_swap_control;
 static bool _sapp_glx_ARB_multisample;
-static bool _sapp_glx_ARB_framebuffer_sRGB;
-static bool _sapp_glx_EXT_framebuffer_sRGB;
+static bool _sapp_glx_ARB_sRGB;
+static bool _sapp_glx_EXT_sRGB;
 static bool _sapp_glx_ARB_create_context;
 static bool _sapp_glx_ARB_create_context_profile;
 
@@ -6161,8 +6161,8 @@ _SOKOL_PRIVATE void _sapp_glx_init() {
         _sapp_glx_MESA_swap_control = 0 != _sapp_glx_SwapIntervalMESA;
     }
     _sapp_glx_ARB_multisample = _sapp_glx_extsupported("GLX_ARB_multisample", exts);
-    _sapp_glx_ARB_framebuffer_sRGB = _sapp_glx_extsupported("GLX_ARB_framebuffer_sRGB", exts);
-    _sapp_glx_EXT_framebuffer_sRGB = _sapp_glx_extsupported("GLX_EXT_framebuffer_sRGB", exts);
+    _sapp_glx_ARB_sRGB = _sapp_glx_extsupported("GLX_ARB_sRGB", exts);
+    _sapp_glx_EXT_sRGB = _sapp_glx_extsupported("GLX_EXT_sRGB", exts);
     if (_sapp_glx_extsupported("GLX_ARB_create_context", exts)) {
         _sapp_glx_CreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC) _sapp_glx_getprocaddr("glXCreateContextAttribsARB");
         _sapp_glx_ARB_create_context = 0 != _sapp_glx_CreateContextAttribsARB;
@@ -6342,8 +6342,8 @@ _SOKOL_PRIVATE void _sapp_x11_query_window_size(void) {
     XGetWindowAttributes(_sapp_x11_display, _sapp_x11_window, &attribs);
     _sapp.window_width = attribs.width;
     _sapp.window_height = attribs.height;
-    _sapp.framebuffer_width = _sapp.window_width;
-    _sapp.framebuffer_height = _sapp.framebuffer_height;
+    _sapp.width = _sapp.window_width;
+    _sapp.height = _sapp.height;
 }
 
 _SOKOL_PRIVATE void _sapp_x11_create_window(Visual* visual, int depth) {
@@ -6778,8 +6778,8 @@ _SOKOL_PRIVATE void _sapp_x11_process_event(XEvent* event) {
             if ((event->xconfigure.width != _sapp.window_width) || (event->xconfigure.height != _sapp.window_height)) {
                 _sapp.window_width = event->xconfigure.width;
                 _sapp.window_height = event->xconfigure.height;
-                _sapp.framebuffer_width = _sapp.window_width;
-                _sapp.framebuffer_height = _sapp.window_height;
+                _sapp.width = _sapp.window_width;
+                _sapp.height = _sapp.window_height;
                 _sapp_x11_app_event(SAPP_EVENTTYPE_RESIZED);
             }
             break;
@@ -6915,11 +6915,11 @@ SOKOL_API_IMPL uint64_t sapp_frame_count(void) {
 }
 
 SOKOL_API_IMPL int sapp_width(void) {
-    return (_sapp.framebuffer_width > 0) ? _sapp.framebuffer_width : 1;
+    return (_sapp.width > 0) ? _sapp.width : 1;
 }
 
 SOKOL_API_IMPL int sapp_height(void) {
-    return (_sapp.framebuffer_height > 0) ? _sapp.framebuffer_height : 1;
+    return (_sapp.height > 0) ? _sapp.height : 1;
 }
 
 SOKOL_API_IMPL bool sapp_high_dpi(void) {

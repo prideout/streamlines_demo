@@ -7,7 +7,7 @@
 
 #define DEMO_INDEX ((int) DEMO_SIMPLE)
 
-static par_streamlines_position vertices[] = {
+static parsl_position vertices[] = {
     {50, 150},
     {200, 100},
     {550, 200},
@@ -21,30 +21,30 @@ static uint16_t spine_lengths[] = { 3, 2 };
 void init_demo_simple(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_INDEX];
-    par_streamlines_config config = { .thickness = 15 };
+    parsl_config config = { .thickness = 15 };
 
-    state->context = par_streamlines_create_context(config);
+    state->context = parsl_create_context(config);
 
-    state->spines = (par_streamlines_spine_list) {
-        .num_vertices = sizeof(vertices) / sizeof(par_streamlines_position),
+    state->spines = (parsl_spine_list) {
+        .num_vertices = sizeof(vertices) / sizeof(parsl_position),
         .num_spines = sizeof(spine_lengths) / sizeof(uint16_t),
         .vertices = vertices,
         .spine_lengths = spine_lengths
     };
-    par_streamlines_mesh* mesh;
-    mesh = par_streamlines_draw_lines(state->context, state->spines);
+    parsl_mesh* mesh;
+    mesh = parsl_mesh_from_lines(state->context, state->spines);
 
     state->num_elements = mesh->num_triangles * 3;
-    assert(sizeof(par_streamlines_position) == 2 * sizeof(float));
-    assert(sizeof(par_streamlines_annotation) == 4 * sizeof(float));
+    assert(sizeof(parsl_position) == 2 * sizeof(float));
+    assert(sizeof(parsl_annotation) == 4 * sizeof(float));
 
     state->positions_buffer = sg_make_buffer(&(sg_buffer_desc){
-        .size = mesh->num_vertices * sizeof(par_streamlines_position),
+        .size = mesh->num_vertices * sizeof(parsl_position),
         .usage = SG_USAGE_DYNAMIC,
     });
 
     state->annotations_buffer = sg_make_buffer(&(sg_buffer_desc){
-        .size = mesh->num_vertices * sizeof(par_streamlines_annotation),
+        .size = mesh->num_vertices * sizeof(parsl_annotation),
         .usage = SG_USAGE_DYNAMIC,
     });
 
@@ -92,12 +92,12 @@ void init_demo_simple(app_state* app) {
 void draw_demo_simple(app_state* app) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
-    float scale = app->framebuffer_scale;
+    float scale = app->pixel_ratio;
     uniform_params resolution = {
-        1.0 / (scale * app->framebuffer_width),
-        1.0 / (scale * app->framebuffer_height),
-        scale * app->framebuffer_width,
-        scale * app->framebuffer_height
+        1.0 / (scale * app->width),
+        1.0 / (scale * app->height),
+        scale * app->width,
+        scale * app->height
     };
 
     demo_state* state = &app->demos[DEMO_INDEX];
@@ -108,18 +108,18 @@ void draw_demo_simple(app_state* app) {
     vertices[4].x = 400 - 50 * cos(PI * elapsed_seconds);
     vertices[4].y = 150 - 50 * sin(PI * elapsed_seconds);
 
-    par_streamlines_mesh* mesh;
-    mesh = par_streamlines_draw_lines(state->context, state->spines);
+    parsl_mesh* mesh;
+    mesh = parsl_mesh_from_lines(state->context, state->spines);
 
     sg_update_buffer(state->positions_buffer,
         mesh->vertex_positions,
-        mesh->num_vertices * sizeof(par_streamlines_position));
+        mesh->num_vertices * sizeof(parsl_position));
 
     sg_update_buffer(state->annotations_buffer,
         mesh->vertex_annotations,
-        mesh->num_vertices * sizeof(par_streamlines_annotation));
+        mesh->num_vertices * sizeof(parsl_annotation));
 
-    sg_begin_default_pass(&state->pass_action, app->framebuffer_width, app->framebuffer_height);
+    sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
     sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));

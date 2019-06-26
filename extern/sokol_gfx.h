@@ -1683,7 +1683,7 @@ typedef struct sg_trace_hooks {
     void (*err_pass_pool_exhausted)(void* user_data);
     void (*err_context_mismatch)(void* user_data);
     void (*err_pass_invalid)(void* user_data);
-    void (*err_draw_invalid)(void* user_data);
+    void (*err_mesh_from_invalid)(void* user_data);
     void (*err_bindings_invalid)(void* user_data);
 } sg_trace_hooks;
 
@@ -1910,7 +1910,7 @@ SOKOL_API_DECL void sg_discard_context(sg_context ctx_id);
 
 /* deprecated structs and functions */
 #ifndef SOKOL_NO_DEPRECATED
-typedef struct sg_draw_state {
+typedef struct sg_mesh_from_state {
     uint32_t _start_canary;
     sg_pipeline pipeline;
     sg_buffer vertex_buffers[SG_MAX_SHADERSTAGE_BUFFERS];
@@ -1920,8 +1920,8 @@ typedef struct sg_draw_state {
     sg_image vs_images[SG_MAX_SHADERSTAGE_IMAGES];
     sg_image fs_images[SG_MAX_SHADERSTAGE_IMAGES];
     uint32_t _end_canary;
-} sg_draw_state;
-SOKOL_API_DECL void sg_apply_draw_state(const sg_draw_state* ds);
+} sg_mesh_from_state;
+SOKOL_API_DECL void sg_apply_mesh_from_state(const sg_mesh_from_state* ds);
 SOKOL_API_DECL void sg_apply_uniform_block(sg_shader_stage stage, int ub_index, const void* data, int num_bytes);
 #endif
 
@@ -2078,13 +2078,13 @@ SOKOL_API_DECL void sg_apply_uniform_block(sg_shader_stage stage, int ub_index, 
     #       define glDrawArraysInstanced(mode, first, count, instancecount)  glDrawArraysInstancedANGLE(mode, first, count, instancecount)
     #       define glDrawElementsInstanced(mode, count, type, indices, instancecount) glDrawElementsInstancedANGLE(mode, count, type, indices, instancecount)
     #       define glVertexAttribDivisor(index, divisor) glVertexAttribDivisorANGLE(index, divisor)
-    #   elif defined(GL_EXT_draw_instanced) && defined(GL_EXT_instanced_arrays)
+    #   elif defined(GL_EXT_mesh_from_instanced) && defined(GL_EXT_instanced_arrays)
     #       define SOKOL_INSTANCING_ENABLED
     #       define glDrawArraysInstanced(mode, first, count, instancecount)  glDrawArraysInstancedEXT(mode, first, count, instancecount)
     #       define glDrawElementsInstanced(mode, count, type, indices, instancecount) glDrawElementsInstancedEXT(mode, count, type, indices, instancecount)
     #       define glVertexAttribDivisor(index, divisor) glVertexAttribDivisorEXT(index, divisor)
     #   else
-    #       define SOKOL_GLES2_INSTANCING_ERROR "Select GL_ANGLE_instanced_arrays or (GL_EXT_draw_instanced & GL_EXT_instanced_arrays) to enable instancing in GLES2"
+    #       define SOKOL_GLES2_INSTANCING_ERROR "Select GL_ANGLE_instanced_arrays or (GL_EXT_mesh_from_instanced & GL_EXT_instanced_arrays) to enable instancing in GLES2"
     #       define glDrawArraysInstanced(mode, first, count, instancecount) SOKOL_ASSERT(0 && SOKOL_GLES2_INSTANCING_ERROR)
     #       define glDrawElementsInstanced(mode, count, type, indices, instancecount) SOKOL_ASSERT(0 && SOKOL_GLES2_INSTANCING_ERROR)
     #       define glVertexAttribDivisor(index, divisor) SOKOL_ASSERT(0 && SOKOL_GLES2_INSTANCING_ERROR)
@@ -2946,7 +2946,7 @@ typedef struct {
     sg_pipeline cur_pipeline;
     bool pass_valid;
     bool bindings_valid;
-    bool next_draw_valid;
+    bool next_mesh_from_valid;
     #if defined(SOKOL_DEBUG)
     _sg_validate_error_t validate_error;
     #endif
@@ -10216,8 +10216,8 @@ SOKOL_API_IMPL void sg_apply_scissor_rect(int x, int y, int width, int height, b
 SOKOL_API_IMPL void sg_apply_pipeline(sg_pipeline pip_id) {
     _sg.bindings_valid = false;
     if (!_sg_validate_apply_pipeline(pip_id)) {
-        _sg.next_draw_valid = false;
-        _SG_TRACE_NOARGS(err_draw_invalid);
+        _sg.next_mesh_from_valid = false;
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
         return;
     }
     if (!_sg.pass_valid) {
@@ -10227,7 +10227,7 @@ SOKOL_API_IMPL void sg_apply_pipeline(sg_pipeline pip_id) {
     _sg.cur_pipeline = pip_id;
     _sg_pipeline_t* pip = _sg_lookup_pipeline(&_sg.pools, pip_id.id);
     SOKOL_ASSERT(pip);
-    _sg.next_draw_valid = (SG_RESOURCESTATE_VALID == pip->slot.state);
+    _sg.next_mesh_from_valid = (SG_RESOURCESTATE_VALID == pip->slot.state);
     SOKOL_ASSERT(pip->shader && (pip->shader->slot.id == pip->shader_id.id));
     _sg_apply_pipeline(pip);
     _SG_TRACE_ARGS(apply_pipeline, pip_id);
@@ -10237,8 +10237,8 @@ SOKOL_API_IMPL void sg_apply_bindings(const sg_bindings* bindings) {
     SOKOL_ASSERT(bindings);
     SOKOL_ASSERT((bindings->_start_canary == 0) && (bindings->_end_canary==0));
     if (!_sg_validate_apply_bindings(bindings)) {
-        _sg.next_draw_valid = false;
-        _SG_TRACE_NOARGS(err_draw_invalid);
+        _sg.next_mesh_from_valid = false;
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
         return;
     }
     _sg.bindings_valid = true;
@@ -10252,8 +10252,8 @@ SOKOL_API_IMPL void sg_apply_bindings(const sg_bindings* bindings) {
         if (bindings->vertex_buffers[i].id) {
             vbs[i] = _sg_lookup_buffer(&_sg.pools, bindings->vertex_buffers[i].id);
             SOKOL_ASSERT(vbs[i]);
-            _sg.next_draw_valid &= (SG_RESOURCESTATE_VALID == vbs[i]->slot.state);
-            _sg.next_draw_valid &= !vbs[i]->append_overflow;
+            _sg.next_mesh_from_valid &= (SG_RESOURCESTATE_VALID == vbs[i]->slot.state);
+            _sg.next_mesh_from_valid &= !vbs[i]->append_overflow;
         }
         else {
             break;
@@ -10264,8 +10264,8 @@ SOKOL_API_IMPL void sg_apply_bindings(const sg_bindings* bindings) {
     if (bindings->index_buffer.id) {
         ib = _sg_lookup_buffer(&_sg.pools, bindings->index_buffer.id);
         SOKOL_ASSERT(ib);
-        _sg.next_draw_valid &= (SG_RESOURCESTATE_VALID == ib->slot.state);
-        _sg.next_draw_valid &= !ib->append_overflow;
+        _sg.next_mesh_from_valid &= (SG_RESOURCESTATE_VALID == ib->slot.state);
+        _sg.next_mesh_from_valid &= !ib->append_overflow;
     }
 
     _sg_image_t* vs_imgs[SG_MAX_SHADERSTAGE_IMAGES] = { 0 };
@@ -10274,7 +10274,7 @@ SOKOL_API_IMPL void sg_apply_bindings(const sg_bindings* bindings) {
         if (bindings->vs_images[i].id) {
             vs_imgs[i] = _sg_lookup_image(&_sg.pools, bindings->vs_images[i].id);
             SOKOL_ASSERT(vs_imgs[i]);
-            _sg.next_draw_valid &= (SG_RESOURCESTATE_VALID == vs_imgs[i]->slot.state);
+            _sg.next_mesh_from_valid &= (SG_RESOURCESTATE_VALID == vs_imgs[i]->slot.state);
         }
         else {
             break;
@@ -10287,20 +10287,20 @@ SOKOL_API_IMPL void sg_apply_bindings(const sg_bindings* bindings) {
         if (bindings->fs_images[i].id) {
             fs_imgs[i] = _sg_lookup_image(&_sg.pools, bindings->fs_images[i].id);
             SOKOL_ASSERT(fs_imgs[i]);
-            _sg.next_draw_valid &= (SG_RESOURCESTATE_VALID == fs_imgs[i]->slot.state);
+            _sg.next_mesh_from_valid &= (SG_RESOURCESTATE_VALID == fs_imgs[i]->slot.state);
         }
         else {
             break;
         }
     }
-    if (_sg.next_draw_valid) {
+    if (_sg.next_mesh_from_valid) {
         const int* vb_offsets = bindings->vertex_buffer_offsets;
         int ib_offset = bindings->index_buffer_offset;
         _sg_apply_bindings(pip, vbs, vb_offsets, num_vbs, ib, ib_offset, vs_imgs, num_vs_imgs, fs_imgs, num_fs_imgs);
         _SG_TRACE_ARGS(apply_bindings, bindings);
     }
     else {
-        _SG_TRACE_NOARGS(err_draw_invalid);
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
     }
 }
 
@@ -10309,16 +10309,16 @@ SOKOL_API_IMPL void sg_apply_uniforms(sg_shader_stage stage, int ub_index, const
     SOKOL_ASSERT((ub_index >= 0) && (ub_index < SG_MAX_SHADERSTAGE_UBS));
     SOKOL_ASSERT(data && (num_bytes > 0));
     if (!_sg_validate_apply_uniforms(stage, ub_index, data, num_bytes)) {
-        _sg.next_draw_valid = false;
-        _SG_TRACE_NOARGS(err_draw_invalid);
+        _sg.next_mesh_from_valid = false;
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
         return;
     }
     if (!_sg.pass_valid) {
         _SG_TRACE_NOARGS(err_pass_invalid);
         return;
     }
-    if (!_sg.next_draw_valid) {
-        _SG_TRACE_NOARGS(err_draw_invalid);
+    if (!_sg.next_mesh_from_valid) {
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
     }
     _sg_apply_uniforms(stage, ub_index, data, num_bytes);
     _SG_TRACE_ARGS(apply_uniforms, stage, ub_index, data, num_bytes);
@@ -10334,8 +10334,8 @@ SOKOL_API_IMPL void sg_draw(int base_element, int num_elements, int num_instance
         _SG_TRACE_NOARGS(err_pass_invalid);
         return;
     }
-    if (!_sg.next_draw_valid) {
-        _SG_TRACE_NOARGS(err_draw_invalid);
+    if (!_sg.next_mesh_from_valid) {
+        _SG_TRACE_NOARGS(err_mesh_from_invalid);
         return;
     }
     if (!_sg.bindings_valid) {
@@ -10526,7 +10526,7 @@ SOKOL_API_IMPL sg_pass_info sg_query_pass_info(sg_pass pass_id) {
 
 /*--- DEPRECATED ---*/
 #ifndef SOKOL_NO_DEPRECATED
-SOKOL_API_IMPL void sg_apply_draw_state(const sg_draw_state* ds) {
+SOKOL_API_IMPL void sg_apply_mesh_from_state(const sg_mesh_from_state* ds) {
     SOKOL_ASSERT(ds);
     SOKOL_ASSERT((ds->_start_canary==0) && (ds->_end_canary==0));
     sg_apply_pipeline(ds->pipeline);
