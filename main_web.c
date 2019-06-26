@@ -46,14 +46,17 @@ void update_framebuffer_dims() {
 }
 
 int main(int argc, char* argv[]) {
-    int context_handle = init_gl();
+    init_gl();
+    sg_setup(&(sg_desc){0});
+    stm_setup();
+    EM_ASM_INT({ start_all_demos() }, 0);
+    app.start_time = stm_now();
+}
+
+void start() {
     int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
 
-    update_framebuffer_dims();
-    sg_setup(&(sg_desc){});
-    stm_setup();
-
-    app.demos[current_demo].em_context = context_handle;
+    app.demos[current_demo].em_context = init_gl();
     app.demos[current_demo].gfx_context = sg_setup_context();
     app.demos[current_demo].pass_action = (sg_pass_action) {
         .colors[0] = {
@@ -61,6 +64,8 @@ int main(int argc, char* argv[]) {
             .val = {0.8f, 0.8f, 0.8f, 1.0f}
         }
     };
+
+    update_framebuffer_dims();
 
     switch (current_demo) {
         case DEMO_SIMPLE: init_demo_simple(&app); break;
@@ -71,14 +76,14 @@ int main(int argc, char* argv[]) {
         case DEMO_NOISY: init_demo_noisy(&app); break;
         case DEMO_STREAMLINES: init_demo_streamlines(&app); break;
     }
-
-    app.start_time = stm_now();
 }
 
 void draw() {
     int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+
     make_current(app.demos[current_demo].em_context);
     sg_activate_context(app.demos[current_demo].gfx_context);
+
     switch (current_demo) {
         case DEMO_SIMPLE: draw_demo_simple(&app); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app); break;

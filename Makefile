@@ -44,7 +44,7 @@ EM_LARGS = \
 	-s MODULARIZE=1 \
 	-s 'EXPORT_NAME="Streamlines"' \
 	-s ERROR_ON_UNDEFINED_SYMBOLS=0 \
-	-s EXPORTED_FUNCTIONS='["_draw", "_main"]'
+	-s EXPORTED_FUNCTIONS='["_draw", "_main", "_start"]'
 
 streamlines.js: $(JSOBJECTS)
 	emcc -o streamlines.js ${EM_LARGS} ${JSOBJECTS} $(CFLAGS)
