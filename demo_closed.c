@@ -29,16 +29,8 @@ void init_demo_closed(app_state* app) {
     parsl_mesh* mesh;
     mesh = parsl_mesh_from_lines(state->context, state->spines);
 
-    assert(sizeof(parsl_position) == 2 * sizeof(float));
-    assert(sizeof(parsl_annotation) == 4 * sizeof(float));
-
     state->positions_buffer = sg_make_buffer(&(sg_buffer_desc){
         .size = mesh->num_vertices * sizeof(parsl_position),
-        .usage = SG_USAGE_DYNAMIC,
-    });
-
-    state->annotations_buffer = sg_make_buffer(&(sg_buffer_desc){
-        .size = mesh->num_vertices * sizeof(parsl_annotation),
         .usage = SG_USAGE_DYNAMIC,
     });
 
@@ -62,7 +54,6 @@ void init_demo_closed(app_state* app) {
 
     state->bindings = (sg_bindings) {
         .vertex_buffers[0] = state->positions_buffer,
-        .vertex_buffers[1] = state->annotations_buffer,
         .index_buffer = indices
     };
 
@@ -78,10 +69,7 @@ void init_demo_closed(app_state* app) {
             .attrs = {
                 [0].buffer_index = 0,
                 [0].offset = 0,
-                [0].format = SG_VERTEXFORMAT_FLOAT2,
-                [1].buffer_index = 1,
-                [1].offset = 0,
-                [1].format = SG_VERTEXFORMAT_FLOAT4,
+                [0].format = SG_VERTEXFORMAT_FLOAT2
             }
         }
     });
@@ -124,13 +112,8 @@ void draw_demo_closed(app_state* app) {
     parsl_mesh* mesh;
     mesh = parsl_mesh_from_lines(state->context, state->spines);
 
-    sg_update_buffer(state->positions_buffer,
-        mesh->vertex_positions,
+    sg_update_buffer(state->positions_buffer, mesh->positions,
         mesh->num_vertices * sizeof(parsl_position));
-
-    sg_update_buffer(state->annotations_buffer,
-        mesh->vertex_annotations,
-        mesh->num_vertices * sizeof(parsl_annotation));
 
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);

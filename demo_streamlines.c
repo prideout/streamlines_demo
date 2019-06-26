@@ -21,7 +21,7 @@ static uint16_t spine_lengths[] = { 3, 2 };
 void init_demo_streamlines(app_state* app) {
 
     demo_state* state = &app->demos[DEMO_STREAMLINES];
-    parsl_config config = { .thickness = 15 };
+    parsl_config config = { .thickness = 15, .flags = PARSL_FLAG_ANNOTATIONS };
 
     state->context = parsl_create_context(config);
 
@@ -110,12 +110,10 @@ void draw_demo_streamlines(app_state* app) {
     parsl_mesh* mesh;
     mesh = parsl_mesh_from_lines(state->context, state->spines);
 
-    sg_update_buffer(state->positions_buffer,
-        mesh->vertex_positions,
+    sg_update_buffer(state->positions_buffer, mesh->positions,
         mesh->num_vertices * sizeof(parsl_position));
 
-    sg_update_buffer(state->annotations_buffer,
-        mesh->vertex_annotations,
+    sg_update_buffer(state->annotations_buffer, mesh->annotations,
         mesh->num_vertices * sizeof(parsl_annotation));
 
     sg_begin_default_pass(&state->pass_action, app->width, app->height);

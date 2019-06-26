@@ -14,24 +14,18 @@ static const char* vs[DEMO_COUNT] = {
 PREAMBLE R"(
 uniform vec4 resolution;
 layout(location=0) in vec2 position;
-layout(location=1) in vec4 annotation;
-out vec4 vannotation;
 void main() {
     vec2 p = 2.0 * position * resolution.xy - 1.0;
     gl_Position = vec4(p, 0.0, 1.0);
-    vannotation = annotation;
 })",
 
 // Wireframe Vertex Shader
 PREAMBLE R"(
 uniform vec4 resolution;
 layout(location=0) in vec2 position;
-layout(location=1) in vec4 annotation;
-out vec4 vannotation;
 void main() {
   vec2 p = 2.0 * position * resolution.xy - 1.0;
   gl_Position = vec4(p, 0.0, 1.0);
-  vannotation = annotation;
 })",
 
 // Gradient Vertex Shader
@@ -75,7 +69,6 @@ PREAMBLE R"(
 uniform vec4 resolution;
 layout(location=0) in vec2 position;
 layout(location=1) in vec4 annotation;
-out vec4 vannotation;
 
 // <https://www.shadertoy.com/view/4dS3Wd>
 // By Morgan McGuire @morgan3d, http://graphicscodex.com
@@ -96,7 +89,6 @@ void main() {
 //  p += spine_to_edge * 0.01 * wave;
   p += annotation.y * spine_to_edge * 0.005 * noise(100.0 * sin(6.28 * annotation.x));
   gl_Position = vec4(p, 0.0, 1.0);
-  vannotation = annotation;
 })",
 
 // Streamlines Vertex Shader
@@ -118,7 +110,6 @@ static const char* fs[DEMO_COUNT] = {
 // Simple Fragment Shader
 PREAMBLE R"(
 precision highp float;
-in vec4 vannotation;
 out vec4 frag_color;
 void main() {
     frag_color = vec4(0, 0, 0, 1);
@@ -127,7 +118,6 @@ void main() {
 // Wireframe Fragment Shader
 PREAMBLE R"(
 precision highp float;
-in vec4 vannotation;
 out vec4 frag_color;
 void main() {
   frag_color = vec4(0, 0, 0, 1);
@@ -179,11 +169,8 @@ void main() {
 // Noisy Fragment Shader
 PREAMBLE R"(
 precision highp float;
-in vec4 vannotation;
 out vec4 frag_color;
 void main() {
-  float distance_along_spine = vannotation.x;
-  float spine_length = vannotation.y;
   frag_color = vec4(0.0, 0.0, 0.0, 0.8);
 })",
 
@@ -204,4 +191,20 @@ const char* get_vertex_shader(demo_type demo) {
 
 const char* get_fragment_shader(demo_type demo) {
     return fs[demo];
+}
+
+#include <par/par_streamlines.h>
+
+__attribute__((unused))
+static void test_cpp() {
+    parsl_context* ctx = parsl_create_context({ .thickness = 3 });
+    parsl_position vertices[] = { {0, 0}, {2, 1}, {4, 0} };
+    uint16_t spine_lengths[] = { 3 };
+    parsl_mesh_from_lines(ctx, {
+        .num_vertices = sizeof(vertices) / sizeof(parsl_position),
+        .num_spines = sizeof(spine_lengths) / sizeof(uint16_t),
+        .vertices = vertices,
+        .spine_lengths = spine_lengths
+    });
+    parsl_destroy_context(ctx);
 }
