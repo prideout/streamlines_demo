@@ -1,0 +1,11 @@
+draw() does not need a demo_index, this can be stored in the canvas state.
+make gradient look simple in its first variant, then remove demo_simple.*
+try on non-HDR monitor
+try adding two streamlines variant
+    PAR_U_MODE_NORMALIZED_DISTANCE instead of SEGMENT_FRACTION
+    Added random offsets
+do not update canvases that are not visible
+add second endcap variant
+curves
+    https://pomax.github.io/bezierinfo/
+migrate to blog/streamlines
