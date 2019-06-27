@@ -54,43 +54,19 @@ int main(int argc, char* argv[]) {
 }
 
 void start() {
-    int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
-
-    app.demos[current_demo].em_context = init_gl();
-    app.demos[current_demo].gfx_context = sg_setup_context();
-    app.demos[current_demo].pass_action = (sg_pass_action) {
-        .colors[0] = {
-            .action = SG_ACTION_CLEAR,
-            .val = {0.8f, 0.8f, 0.8f, 1.0f}
-        }
-    };
-
+    demo_type current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+    int current_variant = EM_ASM_INT({ return window.current_demo }, 0);
+    app.variants[current_variant].em_context = init_gl();
+    app.variants[current_variant].gfx_context = sg_setup_context();
     update_dims();
-
-    switch (current_demo) {
-        case DEMO_SIMPLE: init_demo_simple(&app); break;
-        case DEMO_WIREFRAME: init_demo_wireframe(&app); break;
-        case DEMO_GRADIENT: init_demo_gradient(&app); break;
-        case DEMO_CLOSED: init_demo_closed(&app); break;
-        case DEMO_ENDCAP: init_demo_endcap(&app); break;
-        case DEMO_NOISY: init_demo_noisy(&app); break;
-        case DEMO_STREAMLINES: init_demo_streamlines(&app); break;
-    }
+    init_common(current_demo, current_variant);
 }
 
 void draw() {
-    int current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+    demo_type current_demo = EM_ASM_INT({ return window.current_demo }, 0);
+    int current_variant = EM_ASM_INT({ return window.current_demo }, 0);
+    make_current(app.variants[current_variant].em_context);
+    sg_activate_context(app.variants[current_variant].gfx_context);
+    draw_common(current_demo, current_variant);
 
-    make_current(app.demos[current_demo].em_context);
-    sg_activate_context(app.demos[current_demo].gfx_context);
-
-    switch (current_demo) {
-        case DEMO_SIMPLE: draw_demo_simple(&app); break;
-        case DEMO_WIREFRAME: draw_demo_wireframe(&app); break;
-        case DEMO_GRADIENT: draw_demo_gradient(&app); break;
-        case DEMO_CLOSED: draw_demo_closed(&app); break;
-        case DEMO_ENDCAP: draw_demo_endcap(&app); break;
-        case DEMO_NOISY: draw_demo_noisy(&app); break;
-        case DEMO_STREAMLINES: draw_demo_streamlines(&app); break;
-    }
 }

@@ -20,6 +20,7 @@ OBJECTS = \
 	$(BUILD_DIR)/demo_simple.o \
 	$(BUILD_DIR)/demo_streamlines.o \
 	$(BUILD_DIR)/demo_wireframe.o \
+	$(BUILD_DIR)/main_common.o \
 	$(BUILD_DIR)/main_desktop.o \
 	$(BUILD_DIR)/shaders.o \
 	$(BUILD_DIR)/sokol_mac.o
@@ -33,6 +34,7 @@ JSOBJECTS = \
 	$(BUILD_DIR)/demo_streamlines.js.o \
 	$(BUILD_DIR)/demo_wireframe.js.o \
 	$(BUILD_DIR)/shaders.js.o \
+	$(BUILD_DIR)/main_common.js.o \
 	$(BUILD_DIR)/main_web.js.o
 
 streamlines: $(OBJECTS)

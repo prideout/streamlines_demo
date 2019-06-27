@@ -18,9 +18,9 @@ static parsl_position vertices[] = {
 
 static uint16_t spine_lengths[] = { 3, 2 };
 
-void init_demo_wireframe(app_state* app) {
+void init_demo_wireframe(app_state* app, int variant_index) {
+    variant_state* state = &app->variants[variant_index];
 
-    demo_state* state = &app->demos[DEMO_INDEX];
     parsl_config config = { .thickness = 15, .flags = PARSL_FLAG_WIREFRAME };
 
     state->context = parsl_create_context(config);
@@ -78,7 +78,9 @@ void init_demo_wireframe(app_state* app) {
     });
 }
 
-void draw_demo_wireframe(app_state* app) {
+void draw_demo_wireframe(app_state* app, int variant_index) {
+    variant_state* state = &app->variants[variant_index];
+
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;
@@ -88,8 +90,6 @@ void draw_demo_wireframe(app_state* app) {
         scale * app->width,
         scale * app->height
     };
-
-    demo_state* state = &app->demos[DEMO_INDEX];
 
     vertices[1].y = 150 + 100 * sin(PI * elapsed_seconds);
     vertices[3].x = 400 + 50 * cos(PI * elapsed_seconds);

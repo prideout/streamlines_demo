@@ -17,7 +17,9 @@ typedef enum {
     // TODO: cubic and quadratic curves
 } demo_type;
 
-#define DEMO_COUNT 7
+#define DEMO_TYPE_COUNT 7
+
+#define VARIANT_COUNT 7
 
 typedef struct {
     parsl_context* context;
@@ -32,11 +34,11 @@ typedef struct {
     parsl_spine_list spines;
     int em_context;
     sg_context gfx_context;
-} demo_state;
+} variant_state;
 
 typedef struct {
     uint64_t start_time;
-    demo_state demos[DEMO_COUNT];
+    variant_state variants[VARIANT_COUNT];
     int width;
     int height;
     float pixel_ratio;
@@ -49,26 +51,8 @@ typedef struct {
     float height;
 } uniform_params;
 
-void init_demo_simple(app_state* app);
-void draw_demo_simple(app_state* app);
-
-void init_demo_wireframe(app_state* app);
-void draw_demo_wireframe(app_state* app);
-
-void init_demo_gradient(app_state* app);
-void draw_demo_gradient(app_state* app);
-
-void init_demo_closed(app_state* app);
-void draw_demo_closed(app_state* app);
-
-void init_demo_endcap(app_state* app);
-void draw_demo_endcap(app_state* app);
-
-void init_demo_noisy(app_state* app);
-void draw_demo_noisy(app_state* app);
-
-void init_demo_streamlines(app_state* app);
-void draw_demo_streamlines(app_state* app);
+void init_common(demo_type current_demo, int current_variant);
+void draw_common(demo_type current_demo, int current_variant);
 
 const char* get_vertex_shader(demo_type);
 const char* get_fragment_shader(demo_type);

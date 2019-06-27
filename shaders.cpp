@@ -8,7 +8,7 @@ extern "C" {
 #define PREAMBLE "#version 330\n"
 #endif
 
-static const char* vs[DEMO_COUNT] = {
+static const char* vs[DEMO_TYPE_COUNT] = {
 
 // Simple Vertex Shader
 PREAMBLE R"(
@@ -108,7 +108,7 @@ void main() {
 
 };
 
-static const char* fs[DEMO_COUNT] = {
+static const char* fs[DEMO_TYPE_COUNT] = {
 
 // Simple Fragment Shader
 PREAMBLE R"(

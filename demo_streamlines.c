@@ -34,9 +34,9 @@ static void advect(parsl_position* point, void* userdata) {
     point->y += dt * omega_dot;
 }
 
-void init_demo_streamlines(app_state* app) {
+void init_demo_streamlines(app_state* app, int variant_index) {
 
-    demo_state* state = &app->demos[DEMO_STREAMLINES];
+    variant_state* state = &app->variants[variant_index];
     parsl_config config = {
         .thickness = 3,
         .streamlines_seed_spacing = 20,
@@ -79,6 +79,8 @@ void init_demo_streamlines(app_state* app) {
         .content = mesh->triangle_indices,
         .type = SG_BUFFERTYPE_INDEXBUFFER
     });
+
+    parsl_destroy_context(state->context);
 
     sg_shader program = sg_make_shader(&(sg_shader_desc){
         .vs.uniform_blocks[0] = {
@@ -123,7 +125,7 @@ void init_demo_streamlines(app_state* app) {
     });
 }
 
-void draw_demo_streamlines(app_state* app) {
+void draw_demo_streamlines(app_state* app, int variant_index) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;
@@ -135,7 +137,7 @@ void draw_demo_streamlines(app_state* app) {
         (float) elapsed_seconds
     };
 
-    demo_state* state = &app->demos[DEMO_STREAMLINES];
+    variant_state* state = &app->variants[variant_index];
 
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);
