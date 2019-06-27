@@ -12,8 +12,8 @@ static parsl_position vertices[SLICES * 2];
 
 static uint16_t spine_lengths[] = { SLICES, SLICES };
 
-void init_demo_noisy(app_state* app, int variant_index) {
-    variant_state* state = &app->variants[variant_index];
+void init_demo_noisy(app_state* app, int canvas_index) {
+    canvas_state* state = &app->canvases[canvas_index];
     parsl_config config = { .thickness = 3, .flags = PARSL_FLAG_ANNOTATIONS };
 
     state->context = parsl_create_context(config);
@@ -83,8 +83,8 @@ void init_demo_noisy(app_state* app, int variant_index) {
     });
 }
 
-void draw_demo_noisy(app_state* app, int variant_index) {
-    variant_state* state = &app->variants[variant_index];
+void draw_demo_noisy(app_state* app, int canvas_index) {
+    canvas_state* state = &app->canvases[canvas_index];
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;

@@ -21,32 +21,44 @@ canvas {
 Welcome.
 </p>
 
-<canvas id="simple"></canvas><hr>
-<canvas id="wireframe"></canvas><hr>
-<canvas id="gradient"></canvas><hr>
-<canvas id="closed"></canvas><hr>
-<canvas id="endcap"></canvas><hr>
-<canvas id="noisy"></canvas><hr>
-<canvas id="streamlines"></canvas><hr>
+<canvas id="gradient-0"></canvas><hr>
+<canvas id="wireframe-0"></canvas><hr>
+<canvas id="gradient-1"></canvas><hr>
+<canvas id="closed-0"></canvas><hr>
+<canvas id="endcap-0"></canvas><hr>
+<canvas id="noisy-0"></canvas><hr>
+<canvas id="streamlines-0"></canvas><hr>
 
 <script src="streamlines.js"></script>
-
 <script>
 
 const wasm = Streamlines();
+
+const demo_map = {
+    "simple": 0,
+    "wireframe": 1,
+    "gradient": 2,
+    "closed": 3,
+    "endcap": 4,
+    "noisy": 5,
+    "streamlines": 6,
+};
 
 function start_all_demos() {
 
     const els = [...document.getElementsByTagName('canvas')];
     const ids = els.map(el => el.id)
 
-    ids.forEach((canvas_id, demo_index) => {
-        wasm._start(demo_index, demo_index);
+    ids.forEach((canvas_id, canvas_index) => {
+        const variant = parseInt(canvas_id.split('-')[1]);
+        const demo_type = demo_map[canvas_id.split('-')[0]];
+        wasm._start(demo_type, canvas_index, variant);
     });
 
     const draw = () => {
-        ids.forEach((canvas_id, demo_index) => {
-            wasm._draw(demo_index, demo_index);
+        ids.forEach((canvas_id, canvas_index) => {
+            const demo_type = demo_map[canvas_id.split('-')[0]];
+            wasm._draw(demo_type, canvas_index);
         });
         window.requestAnimationFrame(draw);
     };

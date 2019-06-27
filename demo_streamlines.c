@@ -34,9 +34,9 @@ static void advect(parsl_position* point, void* userdata) {
     point->y += dt * omega_dot;
 }
 
-void init_demo_streamlines(app_state* app, int variant_index) {
+void init_demo_streamlines(app_state* app, int canvas_index) {
 
-    variant_state* state = &app->variants[variant_index];
+    canvas_state* state = &app->canvases[canvas_index];
     parsl_config config = {
         .thickness = 3,
         .streamlines_seed_spacing = 20,
@@ -125,7 +125,7 @@ void init_demo_streamlines(app_state* app, int variant_index) {
     });
 }
 
-void draw_demo_streamlines(app_state* app, int variant_index) {
+void draw_demo_streamlines(app_state* app, int canvas_index) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;
@@ -137,7 +137,7 @@ void draw_demo_streamlines(app_state* app, int variant_index) {
         (float) elapsed_seconds
     };
 
-    variant_state* state = &app->variants[variant_index];
+    canvas_state* state = &app->canvases[canvas_index];
 
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);

@@ -14,11 +14,11 @@
 
 app_state app;
 
-EM_JS(int, init_gl, (int variant_index), {
+EM_JS(int, init_gl, (int canvas_index), {
     const options = {};
 
     const els = document.getElementsByTagName("canvas");
-    const canvas = els[variant_index];
+    const canvas = els[canvas_index];
 
     const ctx = canvas.getContext("webgl2", options);
     const handle = GL.registerContext(ctx, options);
@@ -35,13 +35,13 @@ EM_JS(void, make_current, (int handle), {
     GL.makeContextCurrent(handle);
 });
 
-void update_dims(int variant_index) {
+void update_dims(int canvas_index) {
     app.width = EM_ASM_INT({
         return document.getElementsByTagName("canvas")[$0].width;
-    }, variant_index);
+    }, canvas_index);
     app.height = EM_ASM_INT({
         return document.getElementsByTagName("canvas")[$0].height;
-    }, variant_index);
+    }, canvas_index);
     app.pixel_ratio = EM_ASM_DOUBLE({
         // For now we are using half-size canvases.
         return 2.0 / window.devicePixelRatio;
@@ -56,15 +56,16 @@ int main(int argc, char* argv[]) {
     app.start_time = stm_now();
 }
 
-void start(demo_type current_demo, int current_variant) {
-    app.variants[current_variant].em_context = init_gl(current_variant);
-    app.variants[current_variant].gfx_context = sg_setup_context();
-    update_dims(current_variant);
-    init_common(current_demo, current_variant);
+void start(demo_type demo_index, int canvas_index, int variant) {
+    app.canvases[canvas_index].em_context = init_gl(canvas_index);
+    app.canvases[canvas_index].gfx_context = sg_setup_context();
+    app.canvases[canvas_index].demo_variant = variant;
+    update_dims(canvas_index);
+    init_common(demo_index, canvas_index);
 }
 
-void draw(demo_type current_demo, int current_variant) {
-    make_current(app.variants[current_variant].em_context);
-    sg_activate_context(app.variants[current_variant].gfx_context);
-    draw_common(current_demo, current_variant);
+void draw(demo_type demo_index, int canvas_index) {
+    make_current(app.canvases[canvas_index].em_context);
+    sg_activate_context(app.canvases[canvas_index].gfx_context);
+    draw_common(demo_index, canvas_index);
 }

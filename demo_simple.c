@@ -18,8 +18,8 @@ static parsl_position vertices[] = {
 
 static uint16_t spine_lengths[] = { 3, 2 };
 
-void init_demo_simple(app_state* app, int variant_index) {
-    variant_state* state = &app->variants[variant_index];
+void init_demo_simple(app_state* app, int canvas_index) {
+    canvas_state* state = &app->canvases[canvas_index];
     parsl_config config = { .thickness = 15 };
 
     state->context = parsl_create_context(config);
@@ -77,8 +77,8 @@ void init_demo_simple(app_state* app, int variant_index) {
     });
 }
 
-void draw_demo_simple(app_state* app, int variant_index) {
-    variant_state* state = &app->variants[variant_index];
+void draw_demo_simple(app_state* app, int canvas_index) {
+    canvas_state* state = &app->canvases[canvas_index];
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;

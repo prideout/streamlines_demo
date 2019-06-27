@@ -9,18 +9,18 @@
 
 app_state app;
 
-static int current_demo = DEMO_STREAMLINES;
-static int current_variant = 0;
+static int demo_index = DEMO_STREAMLINES;
+static int canvas_index = 0;
 
 void init_app() {
     sg_setup(&(sg_desc){});
     stm_setup();
-    init_common(current_demo, current_variant);
+    init_common(demo_index, canvas_index);
     app.start_time = stm_now();
 }
 
 void frame() {
-    draw_common(current_demo, current_variant);
+    draw_common(demo_index, canvas_index);
 }
 
 void cleanup() {

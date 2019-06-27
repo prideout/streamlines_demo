@@ -18,8 +18,7 @@ typedef enum {
 } demo_type;
 
 #define DEMO_TYPE_COUNT 7
-
-#define VARIANT_COUNT 7
+#define CANVAS_COUNT 7
 
 typedef struct {
     parsl_context* context;
@@ -34,11 +33,12 @@ typedef struct {
     parsl_spine_list spines;
     int em_context;
     sg_context gfx_context;
-} variant_state;
+    int demo_variant;
+} canvas_state;
 
 typedef struct {
     uint64_t start_time;
-    variant_state variants[VARIANT_COUNT];
+    canvas_state canvases[CANVAS_COUNT];
     int width;
     int height;
     float pixel_ratio;
@@ -51,8 +51,8 @@ typedef struct {
     float height;
 } uniform_params;
 
-void init_common(demo_type current_demo, int current_variant);
-void draw_common(demo_type current_demo, int current_variant);
+void init_common(demo_type demo_index, int canvas_index);
+void draw_common(demo_type demo_index, int canvas_index);
 
 const char* get_vertex_shader(demo_type);
 const char* get_fragment_shader(demo_type);
