@@ -1,4 +1,3 @@
-make gradient look simple in its first variant, then remove demo_simple.*
 try on non-HDR monitor
 try adding two streamlines variant
     PAR_U_MODE_NORMALIZED_DISTANCE instead of SEGMENT_FRACTION

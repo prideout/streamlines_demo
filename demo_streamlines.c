@@ -35,8 +35,16 @@ static void advect(parsl_position* point, void* userdata) {
 }
 
 void init_demo_streamlines(app_state* app, int canvas_index) {
-
     canvas_state* state = &app->canvases[canvas_index];
+    parsl_u_mode u_mode;
+    switch (state->demo_variant) {
+        case 0:
+            u_mode = PAR_U_MODE_NORMALIZED_DISTANCE;
+            break;
+        case 1:
+            u_mode = PAR_U_MODE_SEGMENT_FRACTION;
+            break;
+    }
     parsl_config config = {
         .thickness = 3,
         .streamlines_seed_spacing = 20,
@@ -45,7 +53,7 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
             app->width + margin, app->height + margin
         },
         .flags = PARSL_FLAG_ANNOTATIONS | PARSL_FLAG_RANDOM_OFFSETS,
-        .u_mode = PAR_U_MODE_SEGMENT_FRACTION,
+        .u_mode = u_mode,
     };
 
     state->context = parsl_create_context(config);
