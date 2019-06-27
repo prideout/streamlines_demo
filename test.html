@@ -29,30 +29,24 @@ Welcome.
 <canvas id="noisy"></canvas><hr>
 <canvas id="streamlines"></canvas><hr>
 
-<script>
-window.current_canvas = document.getElementById("simple");
-</script>
-
 <script src="streamlines.js"></script>
 
 <script>
-
-const demos = "simple wireframe gradient closed endcap noisy streamlines".split(" ");
 
 const wasm = Streamlines();
 
 function start_all_demos() {
 
-    demos.forEach((canvas_id, demo_index) => {
-        window.current_canvas = document.getElementById(canvas_id);
-        window.current_demo = demo_index;
-        wasm._start();
+    const els = [...document.getElementsByTagName('canvas')];
+    const ids = els.map(el => el.id)
+
+    ids.forEach((canvas_id, demo_index) => {
+        wasm._start(demo_index, demo_index);
     });
 
     const draw = () => {
-        demos.forEach((canvas_id, demo_index) => {
-            window.current_demo = demo_index;
-            wasm._draw();
+        ids.forEach((canvas_id, demo_index) => {
+            wasm._draw(demo_index, demo_index);
         });
         window.requestAnimationFrame(draw);
     };
