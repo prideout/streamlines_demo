@@ -7,6 +7,14 @@
 
 #define DEMO_INDEX ((int) DEMO_GRADIENT)
 
+typedef struct {
+    float inverse_width;
+    float inverse_height;
+    float width;
+    float height;
+    float apply_gradient;
+} uniforms;
+
 static parsl_position vertices[] = {
     {50, 150},
     {200, 100},
@@ -56,9 +64,10 @@ void init_demo_gradient(app_state* app, int canvas_index) {
 
     sg_shader program = sg_make_shader(&(sg_shader_desc){
         .vs.uniform_blocks[0] = {
-            .size = sizeof(uniform_params),
+            .size = sizeof(uniforms),
             .uniforms = { 
-                [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 }
+                [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 },
+                [1] = { .name = "apply_gradient", .type = SG_UNIFORMTYPE_FLOAT }
             }
         },
         .vs.source = get_vertex_shader(DEMO_INDEX),
@@ -92,11 +101,12 @@ void draw_demo_gradient(app_state* app, int canvas_index) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;
-    uniform_params resolution = {
+    uniforms block = {
         1.0 / (scale * app->width),
         1.0 / (scale * app->height),
         scale * app->width,
-        scale * app->height
+        scale * app->height,
+        state->demo_variant ? 1.0f : 0.0f
     };
 
     vertices[1].y = 150 + 100 * sin(PI * elapsed_seconds);
@@ -116,7 +126,7 @@ void draw_demo_gradient(app_state* app, int canvas_index) {
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &block, sizeof(block));
     sg_draw(0, state->num_elements, 1);
     sg_end_pass();
     sg_commit();

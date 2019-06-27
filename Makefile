@@ -30,7 +30,6 @@ JSOBJECTS = \
 	$(BUILD_DIR)/demo_endcap.js.o \
 	$(BUILD_DIR)/demo_gradient.js.o \
 	$(BUILD_DIR)/demo_noisy.js.o \
-	$(BUILD_DIR)/demo_simple.js.o \
 	$(BUILD_DIR)/demo_streamlines.js.o \
 	$(BUILD_DIR)/demo_wireframe.js.o \
 	$(BUILD_DIR)/shaders.js.o \

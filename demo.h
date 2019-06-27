@@ -7,17 +7,16 @@
 #define PI 3.14159265358979323846
 
 typedef enum {
-    DEMO_SIMPLE = 0,
-    DEMO_WIREFRAME = 1,
-    DEMO_GRADIENT = 2,
-    DEMO_CLOSED = 3,
-    DEMO_ENDCAP = 4, // <-- this has variations
-    DEMO_NOISY = 5,  // <-- this has variations
-    DEMO_STREAMLINES = 6,  // <-- this has variations
+    DEMO_WIREFRAME = 0,
+    DEMO_GRADIENT = 1,
+    DEMO_CLOSED = 2,
+    DEMO_ENDCAP = 3, // <-- this has variations
+    DEMO_NOISY = 4,  // <-- this has variations
+    DEMO_STREAMLINES = 5,  // <-- this has variations
     // TODO: cubic and quadratic curves
 } demo_type;
 
-#define DEMO_TYPE_COUNT 7
+#define DEMO_TYPE_COUNT 6
 #define CANVAS_COUNT 7
 
 typedef struct {

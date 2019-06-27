@@ -2,9 +2,6 @@
 
 extern app_state app;
 
-void init_demo_simple(app_state* app, int canvas_index);
-void draw_demo_simple(app_state* app, int canvas_index);
-
 void init_demo_wireframe(app_state* app, int canvas_index);
 void draw_demo_wireframe(app_state* app, int canvas_index);
 
@@ -32,7 +29,6 @@ void init_common(demo_type demo_index, int canvas_index) {
         }
     };
     switch (demo_index) {
-        case DEMO_SIMPLE: init_demo_simple(&app, canvas_index); break;
         case DEMO_WIREFRAME: init_demo_wireframe(&app, canvas_index); break;
         case DEMO_GRADIENT: init_demo_gradient(&app, canvas_index); break;
         case DEMO_CLOSED: init_demo_closed(&app, canvas_index); break;
@@ -44,7 +40,6 @@ void init_common(demo_type demo_index, int canvas_index) {
 
 void draw_common(int canvas_index) {
     switch (app.canvases[canvas_index].demo) {
-        case DEMO_SIMPLE: draw_demo_simple(&app, canvas_index); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app, canvas_index); break;
         case DEMO_GRADIENT: draw_demo_gradient(&app, canvas_index); break;
         case DEMO_CLOSED: draw_demo_closed(&app, canvas_index); break;

@@ -129,7 +129,7 @@ void draw_demo_streamlines(app_state* app, int canvas_index) {
     const double elapsed_seconds = stm_sec(stm_since(app->start_time));
 
     float scale = app->pixel_ratio;
-    uniforms resolution = {
+    uniforms block = {
         1.0 / (scale * app->width),
         1.0 / (scale * app->height),
         scale * app->width,
@@ -142,7 +142,7 @@ void draw_demo_streamlines(app_state* app, int canvas_index) {
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);
     sg_apply_bindings(&state->bindings);
-    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &resolution, sizeof(resolution));
+    sg_apply_uniforms(SG_SHADERSTAGE_VS, 0, &block, sizeof(block));
     sg_draw(0, state->num_elements, 1);
     sg_end_pass();
     sg_commit();
