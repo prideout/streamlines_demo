@@ -27,6 +27,7 @@ typedef struct {
     sg_buffer positions_buffer;
     sg_buffer annotations_buffer;
     sg_buffer lengths_buffer;
+    sg_buffer offsets_buffer;
     int num_elements;
     parsl_spine_list spines;
     int em_context;
