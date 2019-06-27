@@ -33,6 +33,7 @@ typedef struct {
     parsl_spine_list spines;
     int em_context;
     sg_context gfx_context;
+    demo_type demo;
     int demo_variant;
 } canvas_state;
 
@@ -52,7 +53,7 @@ typedef struct {
 } uniform_params;
 
 void init_common(demo_type demo_index, int canvas_index);
-void draw_common(demo_type demo_index, int canvas_index);
+void draw_common(int canvas_index);
 
 const char* get_vertex_shader(demo_type);
 const char* get_fragment_shader(demo_type);

@@ -64,8 +64,8 @@ void start(demo_type demo_index, int canvas_index, int variant) {
     init_common(demo_index, canvas_index);
 }
 
-void draw(demo_type demo_index, int canvas_index) {
+void draw(int canvas_index) {
     make_current(app.canvases[canvas_index].em_context);
     sg_activate_context(app.canvases[canvas_index].gfx_context);
-    draw_common(demo_index, canvas_index);
+    draw_common(canvas_index);
 }

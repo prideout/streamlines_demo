@@ -57,8 +57,7 @@ function start_all_demos() {
 
     const draw = () => {
         ids.forEach((canvas_id, canvas_index) => {
-            const demo_type = demo_map[canvas_id.split('-')[0]];
-            wasm._draw(demo_type, canvas_index);
+            wasm._draw(canvas_index);
         });
         window.requestAnimationFrame(draw);
     };

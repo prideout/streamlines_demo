@@ -9,3 +9,6 @@ add second endcap variant
 curves
     https://pomax.github.io/bezierinfo/
 migrate to blog/streamlines
+
+"I do not recommend iOS or Safari for viewing this page because the animations
+require support for WebGL 2."

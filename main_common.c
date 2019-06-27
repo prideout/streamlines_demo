@@ -24,6 +24,7 @@ void init_demo_streamlines(app_state* app, int canvas_index);
 void draw_demo_streamlines(app_state* app, int canvas_index);
 
 void init_common(demo_type demo_index, int canvas_index) {
+    app.canvases[canvas_index].demo = demo_index;
     app.canvases[canvas_index].pass_action = (sg_pass_action) {
         .colors[0] = {
             .action = SG_ACTION_CLEAR,
@@ -41,8 +42,8 @@ void init_common(demo_type demo_index, int canvas_index) {
     }
 }
 
-void draw_common(demo_type demo_index, int canvas_index) {
-    switch (demo_index) {
+void draw_common(int canvas_index) {
+    switch (app.canvases[canvas_index].demo) {
         case DEMO_SIMPLE: draw_demo_simple(&app, canvas_index); break;
         case DEMO_WIREFRAME: draw_demo_wireframe(&app, canvas_index); break;
         case DEMO_GRADIENT: draw_demo_gradient(&app, canvas_index); break;

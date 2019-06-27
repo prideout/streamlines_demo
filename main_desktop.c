@@ -20,7 +20,7 @@ void init_app() {
 }
 
 void frame() {
-    draw_common(demo_index, canvas_index);
+    draw_common(canvas_index);
 }
 
 void cleanup() {
