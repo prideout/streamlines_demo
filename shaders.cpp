@@ -61,6 +61,7 @@ PREAMBLE R"(
 uniform vec4 resolution;
 layout(location=0) in vec2 position;
 layout(location=1) in vec4 annotation;
+uniform float variant;
 
 // <https://www.shadertoy.com/view/4dS3Wd>
 // By Morgan McGuire @morgan3d, http://graphicscodex.com
@@ -77,8 +78,10 @@ float noise(float x) {
 void main() {
   vec2 p = 2.0 * position * resolution.xy - 1.0;
   vec2 spine_to_edge = annotation.zw;
-//  float wave = 0.5 + 0.5 * sin(10.0 * 6.28318 * annotation.x);
-//  p += spine_to_edge * 0.01 * wave;
+  if (variant < 0.5) {
+      float wave = 0.5 + 0.5 * sin(10.0 * 6.28318 * annotation.x);
+      p += spine_to_edge * 0.01 * wave;
+  }
   p += annotation.y * spine_to_edge * 0.005 * noise(100.0 * sin(6.28 * annotation.x));
   gl_Position = vec4(p, 0.0, 1.0);
 })",
