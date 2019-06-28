@@ -10,7 +10,6 @@
 const float friction = 0.5f;
 const float g = 1.0f;
 const float L = 1.0f;
-const int margin = 100;
 const float dt = 2.0;
 const int initial_frames = 0;
 const int frame_count = 100;
@@ -26,8 +25,8 @@ typedef struct {
 
 static void advect(parsl_position* point, void* userdata) {
     app_state* app = userdata;
-    float x = 8.0f * (point->x / (float) app->width - 0.5f);
-    float y = 4.0f * (point->y / (float) app->height - 0.5f);
+    float x = 8.0f * (point->x / (app->width * app->pixel_ratio) - 0.5f);
+    float y = 4.0f * (point->y / (app->height * app->pixel_ratio) - 0.5f);
     const float theta = x;
     const float omega = y;
     const float omega_dot = -friction * omega - g / L * sin(theta);
@@ -46,12 +45,17 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
             u_mode = PAR_U_MODE_SEGMENT_FRACTION;
             break;
     }
+
+    const int margin = 50 * app->pixel_ratio;
+
     parsl_config config = {
         .thickness = 3,
         .streamlines_seed_spacing = 20,
         .streamlines_seed_viewport = {
-            -margin, -margin,
-            app->width + margin, app->height + margin
+            -margin,
+            -margin,
+            app->width * app->pixel_ratio + margin,
+            app->height * app->pixel_ratio + margin
         },
         .flags = PARSL_FLAG_ANNOTATIONS | PARSL_FLAG_RANDOM_OFFSETS,
         .u_mode = u_mode,
