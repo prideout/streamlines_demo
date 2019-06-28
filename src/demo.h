@@ -26,6 +26,7 @@ typedef struct {
     sg_pipeline pipeline;
     sg_bindings bindings;
     sg_buffer positions_buffer;
+    sg_buffer index_buffer;
     sg_buffer annotations_buffer;
     sg_buffer lengths_buffer;
     sg_buffer offsets_buffer;

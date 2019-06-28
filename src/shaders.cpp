@@ -110,6 +110,7 @@ layout(location=1) in vec4 annotation;
 out vec4 vannotation;
 void main() {
   vec2 p = 2.0 * position * resolution.xy - 1.0;
+  p = p * 2.0 + vec2(1.25, 1.0); // hack to adjust the viewport
   gl_Position = vec4(p, 0.0, 1.0);
   vannotation = annotation;
 })",

@@ -1,13 +1,14 @@
 curves
     https://pomax.github.io/bezierinfo/
     https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Curve_commands
+    https://www.scratchapixel.com/lessons/advanced-rendering/bezier-curve-rendering-utah-teapot
 
 cubic:
 
     N = number of piecewise curves
     4 + (N - 1) * 2 = number of coordinates
     4 piecewise curves:
-        C0 C1 P0 P1 C3 P2 C4 P3 C7 P4 
+        P0 C0 C1 P1 C3 P2 C4 P3 C7 P4 
         curve 0: C0 C1 P0 P1
         curve 1: C2 C3 P1 P2, where C2 = reflection of C1 at P1
         curve 2: C4 C5 P2 P3, where C4 = reflection of C1 at P1
