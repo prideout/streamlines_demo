@@ -35,6 +35,20 @@ Welcome.
 <script src="streamlines.js"></script>
 <script>
 
+function isScrolledIntoView(el) {
+    const rect = el.getBoundingClientRect();
+    const elemTop = rect.top;
+    const elemBottom = rect.bottom;
+
+    // Only completely visible elements return true:
+    const visible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+
+    // Partially visible elements return true:
+    //const visible = elemTop < window.innerHeight && elemBottom >= 0;
+
+    return visible;
+}
+
 const wasm = Streamlines();
 
 const demo_map = {
@@ -59,7 +73,8 @@ function start_all_demos() {
 
     const draw = () => {
         ids.forEach((canvas_id, canvas_index) => {
-            wasm._draw(canvas_index);
+            const el = els[canvas_index];
+            wasm._draw(canvas_index, isScrolledIntoView(el));
         });
         window.requestAnimationFrame(draw);
     };

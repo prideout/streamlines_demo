@@ -140,7 +140,8 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
 }
 
 void draw_demo_streamlines(app_state* app, int canvas_index) {
-    const double elapsed_seconds = stm_sec(stm_since(app->start_time));
+    canvas_state* state = &app->canvases[canvas_index];
+    const double elapsed_seconds = stm_sec(stm_since(state->start_time));
 
     float scale = app->pixel_ratio;
     uniforms block = {
@@ -151,8 +152,6 @@ void draw_demo_streamlines(app_state* app, int canvas_index) {
         (float) elapsed_seconds,
         (float) app->canvases[canvas_index].demo_variant
     };
-
-    canvas_state* state = &app->canvases[canvas_index];
 
     sg_begin_default_pass(&state->pass_action, app->width, app->height);
     sg_apply_pipeline(state->pipeline);

@@ -76,7 +76,7 @@ void init_demo_closed(app_state* app, int canvas_index) {
 
 void draw_demo_closed(app_state* app, int canvas_index) {
     canvas_state* state = &app->canvases[canvas_index];
-    const double elapsed_seconds = stm_sec(stm_since(app->start_time));
+    const double elapsed_seconds = stm_sec(stm_since(state->start_time));
 
     float scale = app->pixel_ratio;
     uniform_params resolution = {

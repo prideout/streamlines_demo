@@ -53,19 +53,37 @@ int main(int argc, char* argv[]) {
     sg_setup(&(sg_desc){0});
     stm_setup();
     EM_ASM_INT({ start_all_demos() }, 0);
-    app.start_time = stm_now();
 }
 
 void start(demo_type demo_index, int canvas_index, int variant) {
-    app.canvases[canvas_index].em_context = init_gl(canvas_index);
-    app.canvases[canvas_index].gfx_context = sg_setup_context();
-    app.canvases[canvas_index].demo_variant = variant;
+    canvas_state* canvas = &app.canvases[canvas_index];
+    canvas->em_context = init_gl(canvas_index);
+    canvas->gfx_context = sg_setup_context();
+    canvas->demo_variant = variant;
+    canvas->start_time = stm_now();
     update_dims(canvas_index);
     init_common(demo_index, canvas_index);
 }
 
-void draw(int canvas_index) {
-    make_current(app.canvases[canvas_index].em_context);
-    sg_activate_context(app.canvases[canvas_index].gfx_context);
-    draw_common(canvas_index);
+void draw(int canvas_index, bool completely_visible) {
+    canvas_state* canvas = &app.canvases[canvas_index];
+
+    // Unpause
+    if (completely_visible && canvas->paused_time > 0) {
+        uint64_t elapsed = stm_diff(canvas->paused_time, canvas->start_time);
+        canvas->start_time = stm_now() - elapsed;
+        canvas->paused_time = 0;
+    }
+
+    if (completely_visible || !canvas->has_drawn) {
+        make_current(canvas->em_context);
+        sg_activate_context(canvas->gfx_context);
+        draw_common(canvas_index);
+        canvas->has_drawn = true;
+    }
+
+    // Pause
+    if (!completely_visible && canvas->paused_time == 0) {
+        canvas->paused_time = stm_now();
+    }
 }

@@ -34,10 +34,12 @@ typedef struct {
     sg_context gfx_context;
     demo_type demo;
     int demo_variant;
+    uint64_t paused_time;
+    bool has_drawn;
+    uint64_t start_time;
 } canvas_state;
 
 typedef struct {
-    uint64_t start_time;
     canvas_state canvases[CANVAS_COUNT];
     int width;
     int height;
