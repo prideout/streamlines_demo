@@ -9,15 +9,17 @@
 
 app_state app;
 
-static int demo_index = DEMO_STREAMLINES;
-static int canvas_index = 0;
+static const int demo_index = DEMO_CURVES;
+static const int variant_index = 0;
+
+static const int canvas_index = 0; // must be zero in the desktop app
 
 void init_app() {
     sg_setup(&(sg_desc){});
     stm_setup();
     init_common(demo_index, canvas_index);
-    app.canvases[0].demo_variant = 1;
-    app.start_time = stm_now();
+    app.canvases[0].demo_variant = variant_index;
+    app.canvases[0].start_time = stm_now();
 }
 
 void frame() {

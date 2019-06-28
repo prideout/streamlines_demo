@@ -20,6 +20,9 @@ void draw_demo_noisy(app_state* app, int canvas_index);
 void init_demo_streamlines(app_state* app, int canvas_index);
 void draw_demo_streamlines(app_state* app, int canvas_index);
 
+void init_demo_curves(app_state* app, int canvas_index);
+void draw_demo_curves(app_state* app, int canvas_index);
+
 void init_common(demo_type demo_index, int canvas_index) {
     app.canvases[canvas_index].demo = demo_index;
     app.canvases[canvas_index].pass_action = (sg_pass_action) {
@@ -35,6 +38,7 @@ void init_common(demo_type demo_index, int canvas_index) {
         case DEMO_ENDCAP: init_demo_endcap(&app, canvas_index); break;
         case DEMO_NOISY: init_demo_noisy(&app, canvas_index); break;
         case DEMO_STREAMLINES: init_demo_streamlines(&app, canvas_index); break;
+        case DEMO_CURVES: init_demo_curves(&app, canvas_index); break;
     }
 }
 
@@ -46,5 +50,6 @@ void draw_common(int canvas_index) {
         case DEMO_ENDCAP: draw_demo_endcap(&app, canvas_index); break;
         case DEMO_NOISY: draw_demo_noisy(&app, canvas_index); break;
         case DEMO_STREAMLINES: draw_demo_streamlines(&app, canvas_index); break;
+        case DEMO_CURVES: draw_demo_curves(&app, canvas_index); break;
     }
 }

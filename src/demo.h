@@ -13,11 +13,12 @@ typedef enum {
     DEMO_ENDCAP = 3,
     DEMO_NOISY = 4,
     DEMO_STREAMLINES = 5,
+    DEMO_CURVES = 6,
     // TODO: cubic and quadratic curves
 } demo_type;
 
-#define DEMO_TYPE_COUNT 6
-#define CANVAS_COUNT 10
+#define DEMO_TYPE_COUNT 7
+#define CANVAS_COUNT 12
 
 typedef struct {
     parsl_context* context;

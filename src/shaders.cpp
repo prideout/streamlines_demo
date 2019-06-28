@@ -101,6 +101,19 @@ void main() {
     voffset = offset;
 })",
 
+// Curves Vertex Shader
+PREAMBLE R"(
+uniform vec4 resolution;
+uniform float apply_gradient;
+layout(location=0) in vec2 position;
+layout(location=1) in vec4 annotation;
+out vec4 vannotation;
+void main() {
+  vec2 p = 2.0 * position * resolution.xy - 1.0;
+  gl_Position = vec4(p, 0.0, 1.0);
+  vannotation = annotation;
+})",
+
 };
 
 static const char* fs[DEMO_TYPE_COUNT] = {
@@ -181,6 +194,19 @@ void main() {
       L += voffset;
   }
   frag_color = vec4(0.0, 0.0, 0.0, 0.5 * fract(L));
+})",
+
+// Curves Fragment Shader
+PREAMBLE R"(
+precision highp float;
+uniform vec4 resolution;
+uniform float apply_gradient;
+in vec4 vannotation;
+out vec4 frag_color;
+void main() {
+  float t = vannotation.x;
+  vec3 color = mix(vec3(.0, .0, .8), vec3(.0, .8, .0), t);
+  frag_color = vec4(apply_gradient == 0.0 ? vec3(0) : color, 1);
 })",
 
 };
