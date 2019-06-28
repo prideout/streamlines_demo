@@ -21,6 +21,7 @@ typedef struct {
     float width;
     float height;
     float time;
+    float variant;
 } uniforms;
 
 static void advect(parsl_position* point, void* userdata) {
@@ -95,7 +96,8 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
             .size = sizeof(uniforms),
             .uniforms = { 
                 [0] = { .name = "resolution", .type = SG_UNIFORMTYPE_FLOAT4 },
-                [1] = { .name = "time", .type = SG_UNIFORMTYPE_FLOAT }
+                [1] = { .name = "time", .type = SG_UNIFORMTYPE_FLOAT },
+                [2] = { .name = "variant", .type = SG_UNIFORMTYPE_FLOAT }
             }
         },
         .vs.source = get_vertex_shader(DEMO_INDEX),
@@ -142,7 +144,8 @@ void draw_demo_streamlines(app_state* app, int canvas_index) {
         1.0 / (scale * app->height),
         scale * app->width,
         scale * app->height,
-        (float) elapsed_seconds
+        (float) elapsed_seconds,
+        (float) app->canvases[canvas_index].demo_variant
     };
 
     canvas_state* state = &app->canvases[canvas_index];

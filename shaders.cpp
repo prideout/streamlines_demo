@@ -137,12 +137,13 @@ precision highp float;
 in vec4 varying_annotation;
 in float varying_length;
 out vec4 frag_color;
+uniform float variant;
 const float radius = 15.0;
 const float radius2 = radius * radius;
 void main() {
   float dist1 = abs(varying_annotation.x);
   float dist2 = varying_length - abs(varying_annotation.x);
-  float dist = min(dist1, dist2);
+  float dist = variant > 0.5 ? min(dist1, dist2) : dist1;
   float alpha = 1.0;
   if (dist < radius) {
       float x = dist - radius;
@@ -167,11 +168,16 @@ void main() {
 PREAMBLE R"(
 precision highp float;
 uniform float time;
+uniform float variant;
 in float voffset;
 in vec4 vannotation;
 out vec4 frag_color;
 void main() {
-  frag_color = vec4(0.0, 0.0, 0.0, 0.5 * fract(vannotation.x - time + voffset));
+  float L = vannotation.x - time;
+  if (variant >= 0.5) {
+      L += voffset;
+  }
+  frag_color = vec4(0.0, 0.0, 0.0, 0.5 * fract(L));
 })",
 
 };

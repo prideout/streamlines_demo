@@ -1,12 +1,10 @@
-try on non-HDR monitor
-try adding two streamlines variant
-    PAR_U_MODE_NORMALIZED_DISTANCE instead of SEGMENT_FRACTION
-    Added random offsets
+add noisy variant
+try on non-HDR monitor (esp look at the noisy demo)
 do not update canvases that are not visible
-add second endcap variant
 curves
     https://pomax.github.io/bezierinfo/
 migrate to blog/streamlines
+bloom effect and additive blending?
 
 "I do not recommend iOS or Safari for viewing this page because the animations
 require support for WebGL 2."

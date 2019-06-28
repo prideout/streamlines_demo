@@ -10,14 +10,14 @@ typedef enum {
     DEMO_WIREFRAME = 0,
     DEMO_GRADIENT = 1,
     DEMO_CLOSED = 2,
-    DEMO_ENDCAP = 3, // <-- this has variations
-    DEMO_NOISY = 4,  // <-- this has variations
-    DEMO_STREAMLINES = 5,  // <-- this has variations
+    DEMO_ENDCAP = 3,
+    DEMO_NOISY = 4,
+    DEMO_STREAMLINES = 5,
     // TODO: cubic and quadratic curves
 } demo_type;
 
 #define DEMO_TYPE_COUNT 6
-#define CANVAS_COUNT 8
+#define CANVAS_COUNT 9
 
 typedef struct {
     parsl_context* context;
