@@ -17,7 +17,6 @@ OBJECTS = \
 	$(BUILD_DIR)/demo_endcap.o \
 	$(BUILD_DIR)/demo_gradient.o \
 	$(BUILD_DIR)/demo_noisy.o \
-	$(BUILD_DIR)/demo_simple.o \
 	$(BUILD_DIR)/demo_streamlines.o \
 	$(BUILD_DIR)/demo_wireframe.o \
 	$(BUILD_DIR)/main_common.o \

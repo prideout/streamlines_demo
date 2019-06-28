@@ -7,7 +7,7 @@
 
 #define DEMO_INDEX ((int) DEMO_STREAMLINES)
 
-const float friction = 0.5f;
+const float friction = 1.0f;
 const float g = 1.0f;
 const float L = 1.0f;
 const float dt = 2.0;

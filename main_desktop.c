@@ -16,6 +16,7 @@ void init_app() {
     sg_setup(&(sg_desc){});
     stm_setup();
     init_common(demo_index, canvas_index);
+    app.canvases[0].demo_variant = 1;
     app.start_time = stm_now();
 }
 
