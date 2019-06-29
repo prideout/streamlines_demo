@@ -8,7 +8,7 @@
 <style>
 body {
     background-color: #f0f0f0;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 canvas, #streamlines-img {
     width: 300px;
@@ -17,7 +17,7 @@ canvas, #streamlines-img {
 </style>
 
 <p>
-Welcome.
+Click any canvas to convert it into an image.
 </p>
 
 <canvas id="gradient-0"></canvas><hr>
@@ -64,14 +64,34 @@ const demo_map = {
     "curves": 6,
 };
 
+document.addEventListener("click", (evt) => {
+    const el = evt.target;
+    if (el && el.tagName == "CANVAS") {
+        var imgurl = el.toDataURL("image/png");
+
+        var imgel = document.createElement('img');
+        imgel.src = imgurl;
+        imgel.style.border = "solid 2px blue";
+
+        var anchorel = document.createElement('a');
+        anchorel.href = imgurl;
+        anchorel.download = el.id + '.png';
+        anchorel.innerText = "download";
+
+        el.parentNode.replaceChild(anchorel, el);
+        anchorel.click();
+        anchorel.parentNode.replaceChild(imgel, anchorel);
+    }
+});
+
 function start_all_demos() {
 
-    const els = [...document.getElementsByTagName('canvas')];
+    const els = [...document.getElementsByTagName("canvas")];
     const ids = els.map(el => el.id)
 
     ids.forEach((canvas_id, canvas_index) => {
-        const variant = parseInt(canvas_id.split('-')[1]);
-        const demo_type = demo_map[canvas_id.split('-')[0]];
+        const variant = parseInt(canvas_id.split("-")[1]);
+        const demo_type = demo_map[canvas_id.split("-")[0]];
         wasm._start(demo_type, canvas_index, variant);
     });
 

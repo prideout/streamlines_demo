@@ -19,6 +19,7 @@ EM_JS(int, init_gl, (int canvas_index), {
         alpha: false,
         depth: false,
         antialias: true,
+        preserveDrawingBuffer: true // allows screenshots
     };
 
     const els = document.getElementsByTagName("canvas");
