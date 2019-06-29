@@ -19,7 +19,11 @@ static uint16_t spine_lengths[] = { SLICES, 3 };
 void init_demo_wireframe(app_state* app, int canvas_index) {
     canvas_state* state = &app->canvases[canvas_index];
 
-    parsl_config config = { .thickness = 15, .flags = PARSL_FLAG_WIREFRAME };
+    parsl_config config = {
+        .thickness = 15,
+        .flags = PARSL_FLAG_WIREFRAME,
+        .miter_limit = 15
+    };
 
     state->context = parsl_create_context(config);
 
@@ -96,8 +100,6 @@ void draw_demo_wireframe(app_state* app, int canvas_index) {
             400 + 75 * cos(theta - elapsed_seconds * PI / 4),
             150 + 65 * sin(theta - elapsed_seconds * PI / 4)
         };
-
-        // linept = circlept;
 
         float t = 2.0 * fabs(fmod(elapsed_seconds, 2.0) / 2.0 - 0.5);
         t = par_easings_in_out_cubic(t);

@@ -1,7 +1,3 @@
-fix nans in wireframe demo
-
-miter-limit
-
 ensure no-nans for 0-length segments
     easiest to make a second pass through the data?
     also try going backwards in your test case
