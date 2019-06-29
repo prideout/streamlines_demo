@@ -1,23 +1,12 @@
-implement quadratic
+screenshots for safari
 
-curves
-    https://pomax.github.io/bezierinfo/
-    https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Curve_commands
-    https://www.scratchapixel.com/lessons/advanced-rendering/bezier-curve-rendering-utah-teapot
-
-quadratic:
-
-    N = number of piecewise curves
-    N * 2 = number of coordinates
-    4 piecewise curves:
-        P0 C0 P1 C1 P2 C2 P3 C3 P4
-        P0 C0 P1
-        P1 C1 P2
-        P2 C2 P3
-        P3 C3 P4
-
-make streamlines_demo into a submodule of blog/streamlines
+miter-limit
 
 ensure no-nans for 0-length segments
     easiest to make a second pass through the data?
     also try going backwards in your test case
+
+stroke-linejoin
+    miter
+    round
+    bevel

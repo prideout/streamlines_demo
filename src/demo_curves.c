@@ -87,7 +87,7 @@ void init_demo_curves(app_state* app, int canvas_index) {
         .flags = PARSL_FLAG_ANNOTATIONS |
             (testing ? 0 : PARSL_FLAG_CURVE_GUIDES) |
             (testing ? PARSL_FLAG_WIREFRAME : 0),
-        .curves_max_flatness = testing ? 15 : 1
+        .curves_max_flatness = testing ? 5.0f : 0.5f
     };
 
     state->context = parsl_create_context(config);
@@ -169,6 +169,9 @@ void draw_demo_curves(app_state* app, int canvas_index) {
         scale * app->height,
         state->demo_variant ? 1.0f : 0.0f
     };
+
+    quadratic_vertices[1].x = 95 + 20 * sin(PI * elapsed_seconds);
+    quadratic_vertices[1].y = 20 + 20 * sin(PI * elapsed_seconds);
 
     cubic_vertices[2].x = 65 + 20 * sin(PI * elapsed_seconds);
     cubic_vertices[2].y = 10;
