@@ -1,18 +1,24 @@
 # To build for the web, do:
 # source ${EMSDK}/emsdk_env.sh && make -j web
 
+# Uncomment the following lines to enable address sanitizer.
+# Also replace -O3 with -g for a meaningful call stack.
+# ASAN_CFLAGS = -fsanitize=undefined -fsanitize=address
+# ASAN_LINKFLAGS = $(ASAN_CFLAGS) -lstdc++
+
 BUILD_DIR = build
 SRC_DIR = src
 CC = clang
-CFLAGS = -Iextern -Wall -O3 -std=c11
-CPPFLAGS = -Iextern -Wall -O3 -std=c++14
+CFLAGS = -Iextern -Wall -O3 -std=c11 $(ASAN_CFLAGS)
+CPPFLAGS = -Iextern -Wall -O3 -std=c++14 $(ASAN_CFLAGS)
 
 MAC_LIBRARIES = \
 	-framework Foundation \
 	-framework Cocoa \
 	-framework AppKit \
 	-framework OpenGL \
-	-lobjc
+	-lobjc \
+	$(ASAN_LINKFLAGS)
 
 EXTRA_DEPS = \
 	extern/par/par_streamlines.h \

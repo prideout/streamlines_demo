@@ -38,12 +38,8 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
     canvas_state* state = &app->canvases[canvas_index];
     parsl_u_mode u_mode;
     switch (state->demo_variant) {
-        case 0:
-            u_mode = PAR_U_MODE_NORMALIZED_DISTANCE;
-            break;
-        case 1:
-            u_mode = PAR_U_MODE_SEGMENT_FRACTION;
-            break;
+        case 0: u_mode = PAR_U_MODE_NORMALIZED_DISTANCE; break;
+        case 1: u_mode = PAR_U_MODE_SEGMENT_FRACTION; break;
     }
 
     const int margin = 50 * app->pixel_ratio;
@@ -52,8 +48,7 @@ void init_demo_streamlines(app_state* app, int canvas_index) {
         .thickness = 3,
         .streamlines_seed_spacing = 20,
         .streamlines_seed_viewport = {
-            -margin,
-            -margin,
+            -margin, -margin,
             app->width * app->pixel_ratio + margin,
             app->height * app->pixel_ratio + margin
         },
