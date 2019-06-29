@@ -1,3 +1,5 @@
+implement PARSL_FLAG_CURVE_GUIDES
+
 curves
     https://pomax.github.io/bezierinfo/
     https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Curve_commands
@@ -29,3 +31,7 @@ quadratic:
 require support for WebGL 2."
 
 make streamlines_demo into a submodule of blog/streamlines
+
+ensure no-nans for 0-length segments
+    easiest to make a second pass through the data?
+    also try going backwards in your test case

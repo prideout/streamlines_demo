@@ -3,7 +3,7 @@
 
 # Uncomment the following lines to enable address sanitizer.
 # Also replace -O3 with -g for a meaningful call stack.
-# ASAN_CFLAGS = -fsanitize=undefined -fsanitize=address
+# ASAN_CFLAGS = -fsanitize=undefined -fsanitize=address -fstack-protector
 # ASAN_LINKFLAGS = $(ASAN_CFLAGS) -lstdc++
 
 BUILD_DIR = build

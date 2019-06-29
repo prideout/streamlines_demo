@@ -10,10 +10,9 @@ body {
     background-color: #f0f0f0;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-canvas {
+canvas, #streamlines-img {
     width: 300px;
     height: 150px;
-    background-color: black;
 }
 </style>
 
@@ -25,14 +24,16 @@ Welcome.
 <canvas id="wireframe-0"></canvas><hr>
 <canvas id="gradient-1"></canvas><hr>
 <canvas id="closed-0"></canvas><hr>
-<canvas id="endcap-0"></canvas><hr>
+<canvas id="endcap-0"></canvas>
 <canvas id="endcap-1"></canvas><hr>
-<canvas id="noisy-0"></canvas><hr>
+<canvas id="noisy-0"></canvas>
 <canvas id="noisy-1"></canvas><hr>
-<canvas id="streamlines-0"></canvas><hr>
+<img id="streamlines-img" src="streamlines.png">
+<canvas id="streamlines-0"></canvas>
 <canvas id="streamlines-1"></canvas><hr>
-<canvas id="curves-0"></canvas><hr>
-<canvas id="curves-1"></canvas><hr>
+<canvas id="curves-0"></canvas>
+<canvas id="curves-0"></canvas>
+<canvas id="curves-2"></canvas><hr>
 
 <script src="streamlines.js"></script>
 <script>

@@ -18,7 +18,7 @@ typedef enum {
 } demo_type;
 
 #define DEMO_TYPE_COUNT 7
-#define CANVAS_COUNT 12
+#define CANVAS_COUNT 13
 
 typedef struct {
     parsl_context* context;

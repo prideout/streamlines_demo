@@ -15,7 +15,11 @@
 app_state app;
 
 EM_JS(int, init_gl, (int canvas_index), {
-    const options = {};
+    const options = {
+        alpha: false,
+        depth: false,
+        antialias: true,
+    };
 
     const els = document.getElementsByTagName("canvas");
     const canvas = els[canvas_index];
@@ -56,13 +60,14 @@ int main(int argc, char* argv[]) {
 }
 
 void start(demo_type demo_index, int canvas_index, int variant) {
+    assert(canvas_index < CANVAS_COUNT);
     canvas_state* canvas = &app.canvases[canvas_index];
     canvas->em_context = init_gl(canvas_index);
     canvas->gfx_context = sg_setup_context();
     canvas->demo_variant = variant;
-    canvas->start_time = stm_now();
     update_dims(canvas_index);
     init_common(demo_index, canvas_index);
+    canvas->start_time = stm_now();
 }
 
 void draw(int canvas_index, bool completely_visible) {
