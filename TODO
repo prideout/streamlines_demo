@@ -1,20 +1,9 @@
-implement PARSL_FLAG_CURVE_GUIDES
+implement quadratic
 
 curves
     https://pomax.github.io/bezierinfo/
     https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#Curve_commands
     https://www.scratchapixel.com/lessons/advanced-rendering/bezier-curve-rendering-utah-teapot
-
-cubic:
-
-    N = number of piecewise curves
-    4 + (N - 1) * 2 = number of coordinates
-    4 piecewise curves:
-        P0 C0 C1 P1 C3 P2 C4 P3 C7 P4 
-        curve 0: C0 C1 P0 P1
-        curve 1: C2 C3 P1 P2, where C2 = reflection of C1 at P1
-        curve 2: C4 C5 P2 P3, where C4 = reflection of C1 at P1
-        curve 2: C6 C7 P3 P4, where C6 = reflection of C1 at P1
 
 quadratic:
 
@@ -26,9 +15,6 @@ quadratic:
         P1 C1 P2
         P2 C2 P3
         P3 C3 P4
-
-"I do not recommend iOS or Safari for viewing this page because the animations
-require support for WebGL 2."
 
 make streamlines_demo into a submodule of blog/streamlines
 
