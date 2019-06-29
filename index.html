@@ -69,13 +69,13 @@ document.addEventListener("click", (evt) => {
     if (el && el.tagName == "CANVAS") {
         var imgurl = el.toDataURL("image/png");
 
-        var imgel = document.createElement('img');
+        var imgel = document.createElement("img");
         imgel.src = imgurl;
         imgel.style.border = "solid 2px blue";
 
-        var anchorel = document.createElement('a');
+        var anchorel = document.createElement("a");
         anchorel.href = imgurl;
-        anchorel.download = el.id + '.png';
+        anchorel.download = el.id + ".png";
         anchorel.innerText = "download";
 
         el.parentNode.replaceChild(anchorel, el);
@@ -83,6 +83,15 @@ document.addEventListener("click", (evt) => {
         anchorel.parentNode.replaceChild(imgel, anchorel);
     }
 });
+
+function invoke_fallback() {
+    const els = [...document.getElementsByTagName("canvas")];
+    els.forEach((canvas, canvas_index) => {
+        var imgel = document.createElement("img");
+        imgel.src = "images/" + canvas.id + ".png";
+        canvas.parentNode.replaceChild(imgel, canvas);
+    });
+}
 
 function start_all_demos() {
 

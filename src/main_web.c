@@ -26,6 +26,10 @@ EM_JS(int, init_gl, (int canvas_index), {
     const canvas = els[canvas_index];
 
     const ctx = canvas.getContext("webgl2", options);
+    if (!ctx) {
+        return 0;
+    }
+
     const handle = GL.registerContext(ctx, options);
     GL.makeContextCurrent(handle);
 
@@ -54,10 +58,13 @@ void update_dims(int canvas_index) {
 }
 
 int main(int argc, char* argv[]) {
-    init_gl(0);
-    sg_setup(&(sg_desc){0});
-    stm_setup();
-    EM_ASM_INT({ start_all_demos() }, 0);
+    if (init_gl(0) == 0) {
+        EM_ASM_INT({ invoke_fallback() }, 0);
+    } else {
+        sg_setup(&(sg_desc){0});
+        stm_setup();
+        EM_ASM_INT({ start_all_demos() }, 0);
+    }
 }
 
 void start(demo_type demo_index, int canvas_index, int variant) {
