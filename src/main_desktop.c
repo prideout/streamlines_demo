@@ -9,8 +9,8 @@
 
 app_state app;
 
-static const int demo_index = DEMO_CURVES;
-static const int variant_index = 2;
+static const int demo_index = DEMO_WIREFRAME;
+static const int variant_index = 0;
 
 static const int canvas_index = 0; // must be zero in the desktop app
 

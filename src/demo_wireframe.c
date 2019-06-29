@@ -5,18 +5,16 @@
 #include <assert.h>
 #include <math.h>
 
+#define PAR_EASINGS_IMPLEMENTATION
+#include <par/par_easings.h>
+
 #define DEMO_INDEX ((int) DEMO_WIREFRAME)
 
-static parsl_position vertices[] = {
-    {50, 150},
-    {200, 100},
-    {550, 200},
+#define SLICES 16
 
-    {400, 200},
-    {400, 100},
-};
+static parsl_position vertices[SLICES + 3];
 
-static uint16_t spine_lengths[] = { 3, 2 };
+static uint16_t spine_lengths[] = { SLICES, 3 };
 
 void init_demo_wireframe(app_state* app, int canvas_index) {
     canvas_state* state = &app->canvases[canvas_index];
@@ -91,11 +89,28 @@ void draw_demo_wireframe(app_state* app, int canvas_index) {
         scale * app->height
     };
 
-    vertices[1].y = 150 + 100 * sin(PI * elapsed_seconds);
-    vertices[3].x = 400 + 50 * cos(PI * elapsed_seconds);
-    vertices[3].y = 150 + 50 * sin(PI * elapsed_seconds);
-    vertices[4].x = 400 - 50 * cos(PI * elapsed_seconds);
-    vertices[4].y = 150 - 50 * sin(PI * elapsed_seconds);
+    for (int i = 0; i < SLICES; i++) {
+        const float theta = i * PI * 2.0f / SLICES;
+        parsl_position linept = { 20.0f + 430.0f * i / SLICES, 100.0f };
+        parsl_position circlept = {
+            400 + 75 * cos(theta - elapsed_seconds * PI / 4),
+            150 + 65 * sin(theta - elapsed_seconds * PI / 4)
+        };
+
+        // linept = circlept;
+
+        float t = 2.0 * fabs(fmod(elapsed_seconds, 2.0) / 2.0 - 0.5);
+        t = par_easings_in_out_cubic(t);
+        vertices[i].x = linept.x * t + circlept.x * (1 - t);
+        vertices[i].y = linept.y * t + circlept.y * (1 - t);
+    }
+
+    vertices[SLICES + 0].x = 400 + 50 * cos(PI * elapsed_seconds);
+    vertices[SLICES + 0].y = 150 + 50 * sin(PI * elapsed_seconds);
+    vertices[SLICES + 1].x = 400;
+    vertices[SLICES + 1].y = 150;
+    vertices[SLICES + 2].x = 400 - 50 * cos(PI * elapsed_seconds);
+    vertices[SLICES + 2].y = 150 - 50 * sin(PI * elapsed_seconds);
 
     parsl_mesh* mesh;
     mesh = parsl_mesh_from_lines(state->context, state->spines);

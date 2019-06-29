@@ -1,3 +1,5 @@
+fix nans in wireframe demo
+
 miter-limit
 
 ensure no-nans for 0-length segments
