@@ -1,4 +1,4 @@
-Uses `sokol_gfx` to demonstrate the capabilities of `par_streamlines.h`.
+Uses [sokol_gfx](https://github.com/floooh/sokol) to demonstrate the capabilities of [par_streamlines.h](https://github.com/prideout/par/blob/master/par_streamlines.h).
 
 This is the source code to the multi-canvas application deployed to the
 following location:
