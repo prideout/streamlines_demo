@@ -17,19 +17,14 @@ typedef struct {
     float apply_gradient;
 } uniforms;
 
-static uint16_t test_spine_lengths[] = { 6, 4 };
+static uint16_t test_spine_lengths[] = { 6 };
 static parsl_position test_vertices[] = {
     { 10, 80 },   // P
     { 40, 10 },   // C1
     { 65, 10 },   // C2
     { 95, 80 },   // P
     { 150, 150 }, // C2
-    { 180, 80 },  // P
-
-    { 100, 1 },   // P
-    { 200, 100 }, // C1
-    { 0,  200 }, // C2
-    { 100, 300 }, // P
+    { 180, 80 }  // P
 };
 
 static uint16_t cubic_spine_lengths[] = { 6 };
