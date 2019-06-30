@@ -1,6 +1,9 @@
 ensure no-nans for 0-length segments
     easiest to make a second pass through the data?
-    also try going backwards in your test case
+
+create unit test in prideout/par
+    make the line go backwards along itself
+    include 0-length segments
 
 stroke-linejoin
     miter
