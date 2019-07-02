@@ -1,6 +1,6 @@
 #pragma once
 
-#include "sokol_gfx.h"
+#include <sokol/sokol_gfx.h>
 
 #include <par/par_streamlines.h>
 

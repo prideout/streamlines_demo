@@ -1,3 +1,6 @@
 [submodule "par"]
 	path = extern/par
 	url = https://github.com/prideout/par.git
+[submodule "extern/sokol"]
+	path = extern/sokol
+	url = https://github.com/floooh/sokol.git

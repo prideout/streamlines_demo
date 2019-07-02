@@ -7,8 +7,8 @@
 
 #include <par/par_streamlines.h>
 
-#include "sokol_gfx.h"
-#include "sokol_time.h"
+#include <sokol/sokol_gfx.h>
+#include <sokol/sokol_time.h>
 
 #include "demo.h"
 

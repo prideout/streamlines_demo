@@ -22,7 +22,8 @@ MAC_LIBRARIES = \
 
 EXTRA_DEPS = \
 	extern/par/par_streamlines.h \
-	$(SRC_DIR)/demo.h
+	$(SRC_DIR)/demo.h \
+	$(SRC_DIR)/vmath.h
 
 OBJECTS = \
 	$(BUILD_DIR)/demo_closed.o \
@@ -32,10 +33,9 @@ OBJECTS = \
 	$(BUILD_DIR)/demo_noisy.o \
 	$(BUILD_DIR)/demo_streamlines.o \
 	$(BUILD_DIR)/demo_wireframe.o \
-	$(BUILD_DIR)/main_common.o \
-	$(BUILD_DIR)/main_desktop.o \
+	$(BUILD_DIR)/common.o \
 	$(BUILD_DIR)/shaders.o \
-	$(BUILD_DIR)/sokol_mac.o
+	$(BUILD_DIR)/main_macos.o
 
 JSOBJECTS = \
 	$(BUILD_DIR)/demo_closed.js.o \
@@ -45,9 +45,9 @@ JSOBJECTS = \
 	$(BUILD_DIR)/demo_noisy.js.o \
 	$(BUILD_DIR)/demo_streamlines.js.o \
 	$(BUILD_DIR)/demo_wireframe.js.o \
-	$(BUILD_DIR)/main_common.js.o \
-	$(BUILD_DIR)/main_web.js.o \
-	$(BUILD_DIR)/shaders.js.o
+	$(BUILD_DIR)/common.js.o \
+	$(BUILD_DIR)/shaders.js.o \
+	$(BUILD_DIR)/main_web.js.o
 
 EM_LINKARGS = \
 	-s MODULARIZE=1 \
@@ -83,5 +83,5 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c $(EXTRA_DEPS) | $(BUILD_DIR)
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(EXTRA_DEPS) | $(BUILD_DIR)
 	$(CC) -c -o $@ $< $(CPPFLAGS)
 
-$(BUILD_DIR)/sokol_mac.o: $(BUILD_DIR)
-	$(CC) -fobjc-arc -c -Wall -O3 extern/sokol_mac.m -o $@
+$(BUILD_DIR)/main_macos.o: $(BUILD_DIR)
+	$(CC) -fobjc-arc -c $(CFLAGS) src/main_macos.m -o $@

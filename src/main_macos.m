@@ -1,8 +1,11 @@
-#include "sokol_app.h"
-#include "sokol_gfx.h"
-#include "sokol_time.h"
-
+#define SOKOL_GLCORE33
+#define SOKOL_IMPL
 #define PAR_STREAMLINES_IMPLEMENTATION
+
+#include <sokol/sokol_app.h>
+#include <sokol/sokol_gfx.h>
+#include <sokol/sokol_time.h>
+
 #include <par/par_streamlines.h>
 
 #include "demo.h"
