@@ -1,11 +1,13 @@
 #define SOKOL_GLCORE33
 #define SOKOL_IMPL
 #define PAR_STREAMLINES_IMPLEMENTATION
+#define PAR_SHADERS_IMPLEMENTATION
 
 #include <sokol/sokol_app.h>
 #include <sokol/sokol_gfx.h>
 #include <sokol/sokol_time.h>
 
+#include <par/par_shaders.h>
 #include <par/par_streamlines.h>
 
 #include "demo.h"

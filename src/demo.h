@@ -2,6 +2,7 @@
 
 #include <sokol/sokol_gfx.h>
 
+#include <par/par_shaders.h>
 #include <par/par_streamlines.h>
 
 #define PI 3.14159265358979323846
@@ -46,6 +47,7 @@ typedef struct {
     int width;
     int height;
     float pixel_ratio;
+    parsh_context* shaders;
 } app_state;
 
 typedef struct {

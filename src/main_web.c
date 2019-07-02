@@ -1,14 +1,16 @@
 #define PAR_STREAMLINES_IMPLEMENTATION
+#define PAR_SHADERS_IMPLEMENTATION
 #define SOKOL_GLES3
 #define SOKOL_IMPL
 
 #include <emscripten.h>
 #include <GLES3/gl3.h>
 
-#include <par/par_streamlines.h>
-
 #include <sokol/sokol_gfx.h>
 #include <sokol/sokol_time.h>
+
+#include <par/par_shaders.h>
+#include <par/par_streamlines.h>
 
 #include "demo.h"
 

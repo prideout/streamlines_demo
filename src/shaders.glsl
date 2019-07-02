@@ -98,7 +98,7 @@ layout(location=1) in vec4 annotation;
 out vec4 vannotation;
 void main() {
   vec2 p = 2.0 * position * resolution.xy - 1.0;
-  p = p * vec2(2.0, 1.8) + vec2(1.25, 0.85); -- hack to adjust the viewport
+  p = p * vec2(2.0, 1.8) + vec2(1.25, 0.85); // hack to adjust the viewport
   gl_Position = vec4(p, 0.0, 1.0);
   vannotation = annotation;
 }
@@ -183,4 +183,4 @@ out vec4 frag_color;
 void main() {
   float t = vannotation.x;
   frag_color = vec4(0.0, 0.0, 0.0, 0.75);
-}philip
+}
