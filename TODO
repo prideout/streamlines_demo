@@ -1,3 +1,5 @@
+For README.md, mimic the examples as http://tyt2y3.github.io/vaser-web/
+
 ensure no-nans for 0-length segments
     easiest to make a second pass through the data?
 
