@@ -4,3 +4,11 @@ This is the source code to the multi-canvas application deployed to the
 following location:
 
 https://prideout.net/blog/par_streamlines/
+
+To try this out on macOS, do the following:
+
+```
+git submodule update --init
+make
+./streamlines
+```
